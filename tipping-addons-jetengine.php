@@ -48,9 +48,10 @@ class TippingAddonsJetEngine {
 
     public function init_components() {
         // Load plugin files
+        require_once plugin_dir_path(__FILE__) . 'includes/functions.php';
         require_once plugin_dir_path(__FILE__) . 'includes/admin/admin-panel.php';
         require_once plugin_dir_path(__FILE__) . 'includes/woocommerce/cart-integration.php';
-
+        
         // Load widget after Elementor is fully initialized
         add_action('elementor/init', function () {
             require_once plugin_dir_path(__FILE__) . 'includes/widgets/tip-widget.php';

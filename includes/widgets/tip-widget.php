@@ -1,28 +1,35 @@
 <?php
+
 namespace TippingAddonsJetEngine\Widgets;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class TipWidget extends \Elementor\Widget_Base {
-    public function get_name() {
+class TipWidget extends \Elementor\Widget_Base
+{
+    public function get_name()
+    {
         return 'tip-widget';
     }
 
-    public function get_title() {
+    public function get_title()
+    {
         return esc_html__('Tip Widget', 'tipping-addons-jetengine');
     }
 
-    public function get_icon() {
+    public function get_icon()
+    {
         return 'eicon-price-table';
     }
 
-    public function get_categories() {
+    public function get_categories()
+    {
         return ['general'];
     }
 
-    protected function register_controls() {
+    protected function register_controls()
+    {
         $this->start_controls_section(
             'content_section',
             [
@@ -44,10 +51,11 @@ class TipWidget extends \Elementor\Widget_Base {
         $this->end_controls_section();
     }
 
-    protected function render() {
+    protected function render()
+    {
         $settings = $this->get_settings_for_display();
         $default_amount = $settings['default_amount'];
-        ?>
+?>
         <div class="tip-widget-container">
             <div class="tip-amount-control">
                 <button class="tip-decrease" onclick="decreaseTip(this)">-</button>
@@ -107,6 +115,9 @@ class TipWidget extends \Elementor\Widget_Base {
         </style>
 
         <script>
+            // Define ajaxurl for frontend
+            var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+
             function increaseTip(button) {
                 const input = button.parentElement.querySelector('.tip-amount');
                 input.value = parseInt(input.value) + 1;
@@ -137,19 +148,27 @@ class TipWidget extends \Elementor\Widget_Base {
                         post_id: postId,
                         nonce: '<?php echo wp_create_nonce("add_tip_to_cart"); ?>'
                     },
+                    beforeSend: function() {
+                        console.log('Sending request to:', ajaxurl);
+                    },
                     success: function(response) {
                         if (response.success) {
-                            alert('Tip added to cart successfully!');
+                            window.location.href = '<?php echo wc_get_checkout_url(); ?>';
                         } else {
-                            alert('Error adding tip to cart.');
+                            alert('Error: ' + (response.data || 'Unknown error'));
                         }
                     },
-                    error: function() {
-                        alert('Error adding tip to cart.');
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', {
+                            xhr,
+                            status,
+                            error
+                        });
+                        alert('Error adding tip to cart: ' + error);
                     }
                 });
             }
         </script>
-        <?php
+<?php
     }
 }

@@ -18,47 +18,57 @@ class TippingCartIntegration {
 
         $amount = floatval($_POST['amount']);
         $post_id = intval($_POST['post_id']);
+        $post_title = get_the_title($post_id);
 
         if ($amount < 1 || !$post_id) {
             wp_send_json_error('Invalid amount or post ID');
             return;
         }
 
+        // Clear the entire cart first
+        WC()->cart->empty_cart();
+
         $cart_item_data = [
-            'tip_data' => [
-                'song_id' => $post_id,
-                'amount' => $amount
-            ]
+            'custom_price' => $amount,
+            'is_tip' => true,
+            'post_title' => $post_title,
+            'post_id' => $post_id
         ];
 
-        $product_id = $this->get_or_create_tip_product();
+        $product_id = $this->get_or_create_tip_product($post_title);
         
         if (!$product_id) {
             wp_send_json_error('Failed to create tip product');
             return;
         }
 
-        WC()->cart->add_to_cart($product_id, 1, 0, [], $cart_item_data);
+        WC()->cart->add_to_cart($product_id, 1, 0, array(), $cart_item_data);
         wp_send_json_success();
+        error_log('------------------------- ending adding to cart --------');
     }
 
-    private function get_or_create_tip_product() {
+    private function get_or_create_tip_product($post_title = '')
+    {
         $product_id = get_option('tipping_product_id');
         $product = $product_id ? wc_get_product($product_id) : null;
 
-        if (!$product) {
-            $product = new WC_Product_Simple();
-            $product->set_name('Song Tip');
-            $product->set_status('private');
+        if (!$product || !$product->exists()) {
+            $product = new \WC_Product_Simple();
+            $product->set_name(sprintf(__('Tip for: %s', 'tipping-addons-jetengine'), $post_title));
+            $product->set_status('publish');  // Changed from 'private' to 'publish'
             $product->set_catalog_visibility('hidden');
             $product->set_price(0);
             $product->set_regular_price(0);
             $product->set_virtual(true);
+            $product->set_sold_individually(true);
             $product_id = $product->save();
 
             if ($product_id) {
                 update_option('tipping_product_id', $product_id);
             }
+        } else {
+            $product->set_name(sprintf(__('Tip for: %s', 'tipping-addons-jetengine'), $post_title));
+            $product->save();
         }
 
         return $product_id;
