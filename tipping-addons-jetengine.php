@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Plugin Name: JetEngine Tipping Addons
  * Description: A tipping system integrated with JetEngine and Elementor
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Xian Malik
  * Text Domain: tipping-addons-jetengine
  */
