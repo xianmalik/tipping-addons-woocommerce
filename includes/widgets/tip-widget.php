@@ -153,9 +153,9 @@ class TipWidget extends \Elementor\Widget_Base
                     },
                     success: function(response) {
                         if (response.success) {
-                            window.location.href = '<?php echo wc_get_checkout_url(); ?>';
+                            window.location.href = '<?php echo wc_get_cart_url(); ?>';
                         } else {
-                            alert('Error: ' + (response.data || 'Unknown error'));
+                            console.error('Error: ' + (response.data || 'Unknown error'));
                         }
                     },
                     error: function(xhr, status, error) {
