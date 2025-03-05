@@ -59,9 +59,91 @@ class TipWidget extends \Elementor\Widget_Base
         <div class="tip-widget-container">
             <div class="tip-amount-control">
                 <button class="tip-decrease" onclick="decreaseTip(this)">-</button>
-                <input type="number" class="tip-amount" value="<?php echo esc_attr($default_amount); ?>" min="1" onchange="validateTip(this)">
+                <div class="amount-wrapper">
+                    <span class="dollar-sign">$</span>
+                    <input type="text" class="tip-amount" value="<?php echo number_format($default_amount, 2); ?>" min="1" step="1" onkeyup="validateTip(this)">
+                </div>
                 <button class="tip-increase" onclick="increaseTip(this)">+</button>
             </div>
+
+            <style>
+                .tip-widget-container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 15px;
+                    padding: 20px;
+                }
+
+                .tip-widget-container .tip-amount-control {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+
+                .tip-widget-container .tip-amount {
+                    width: 60px;
+                    text-align: left;
+                    border: none;
+                    padding: 4px;
+                    font-size: 16px;
+                    background: transparent;
+                }
+
+                .tip-widget-container .tip-decrease,
+                .tip-widget-container .tip-increase {
+                    padding: 8px 12px;
+                    background-color: #f0f0f0;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    color: #000 !important;
+                }
+
+                .tip-widget-container .tip-now-button {
+                    padding: 10px 20px;
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                .tip-widget-container .tip-now-button:hover {
+                    background-color: #45a049;
+                }
+
+                .tip-widget-container .amount-wrapper {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    border: 2px solid #f7941d;
+                    border-radius: 4px;
+                    padding: 4px 8px;
+                }
+
+                .tip-widget-container .dollar-sign {
+                    font-size: 16px;
+                    color: #333;
+                    margin-right: 2px;
+                }
+
+                .tip-widget-container .tip-amount:focus {
+                    outline: none;
+                }
+
+                /* Hide spinner buttons */
+                .tip-widget-container .tip-amount::-webkit-outer-spin-button,
+                .tip-widget-container .tip-amount::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+
+                .tip-widget-container .tip-amount[type=number] {
+                    -moz-appearance: textfield;
+                }
+            </style>
             <button class="tip-now-button" onclick="addTipToCart(this)">
                 <?php echo esc_html__('Tip Now', 'tipping-addons-jetengine'); ?>
             </button>
@@ -120,18 +202,45 @@ class TipWidget extends \Elementor\Widget_Base
 
             function increaseTip(button) {
                 const input = button.parentElement.querySelector('.tip-amount');
-                input.value = parseInt(input.value) + 1;
+                input.value = parseFloat(input.value) + 1;
                 validateTip(input);
             }
 
             function decreaseTip(button) {
                 const input = button.parentElement.querySelector('.tip-amount');
-                input.value = Math.max(1, parseInt(input.value) - 1);
+                input.value = Math.max(1, parseFloat(input.value) - 1);
                 validateTip(input);
             }
 
-            function validateTip(input) {
-                input.value = Math.max(1, parseInt(input.value) || 1);
+            const validateTip = i => {
+                console.log({
+                    i
+                });
+                let v = i.value;
+                const ss = i.selectionStart;
+                const resetCursor = () => i.setSelectionRange(ss, ss);
+                if (/^[0]*.00$/.test(v)) {
+                    i.value = '';
+                } else if (/^[0-9.]+$/.test(v)) {
+                    let p = v.indexOf('..');
+                    if (p >= 0) {
+                        i.value = v.replace('..', '.');
+                        resetCursor();
+                        process(i);
+                    } else if ([...v].filter(c => c === '.').length > 1) {
+                        let j = v.indexOf('.');
+                        i.value = [...v].filter((c, k) => k <= j || c !== '.').join('');
+                        resetCursor();
+                        process(i);
+                    } else {
+                        i.value = (+v).toFixed(2);
+                        resetCursor();
+                    }
+                } else {
+                    v = v.replace(/[^0-9.]/g, '');
+                    i.value = v;
+                    resetCursor();
+                }
             }
 
             function addTipToCart(button) {
