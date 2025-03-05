@@ -3,8 +3,8 @@
 /**
  * Plugin Name: JetEngine Tipping Addons
  * Description: A tipping system integrated with JetEngine and Elementor
- * Version: 1.0.1
- * Author: Xian Malik
+ * Version: 1.0.2
+ * Author: Malik Zubayer
  * Text Domain: tipping-addons-jetengine
  */
 

@@ -26,7 +26,7 @@ class TippingCartIntegration {
         }
 
         // Clear the entire cart first
-        WC()->cart->empty_cart();
+        // WC()->cart->empty_cart();
 
         $cart_item_data = [
             'custom_price' => $amount,
