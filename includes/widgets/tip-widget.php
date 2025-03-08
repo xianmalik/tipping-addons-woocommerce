@@ -247,6 +247,8 @@ class TipWidget extends \Elementor\Widget_Base
                 const container = button.closest('.tip-widget-container');
                 const amount = container.querySelector('.tip-amount').value;
                 const postId = '<?php echo get_the_ID(); ?>';
+                const pageTitle = '<?php echo esc_js(get_the_title()); ?>';
+                const featuredImageId = '<?php echo get_post_thumbnail_id(); ?>';
 
                 jQuery.ajax({
                     url: ajaxurl,
@@ -255,6 +257,8 @@ class TipWidget extends \Elementor\Widget_Base
                         action: 'add_tip_to_cart',
                         amount: amount,
                         post_id: postId,
+                        page_title: pageTitle,
+                        featured_image_id: featuredImageId,
                         nonce: '<?php echo wp_create_nonce("add_tip_to_cart"); ?>'
                     },
                     beforeSend: function() {
@@ -262,7 +266,26 @@ class TipWidget extends \Elementor\Widget_Base
                     },
                     success: function(response) {
                         if (response.success) {
-                            window.location.href = '<?php echo wc_get_cart_url(); ?>';
+                            // Update cart count
+                            const cartIcon = document.querySelector('.sticky-cart-icon');
+                            const cartCount = document.querySelector('.cart-item-count');
+                            const newCount = parseInt(cartCount?.textContent || '0') + 1;
+
+                            // Update or create count element
+                            if (cartCount) {
+                                cartCount.textContent = newCount;
+                            } else {
+                                const newCountElement = document.createElement('span');
+                                newCountElement.className = 'cart-item-count';
+                                newCountElement.textContent = '1';
+                                cartIcon.appendChild(newCountElement);
+                            }
+
+                            // Add bounce animation
+                            cartIcon.classList.add('bounce');
+                            setTimeout(() => {
+                                cartIcon.classList.remove('bounce');
+                            }, 1000);
                         } else {
                             console.error('Error: ' + (response.data || 'Unknown error'));
                         }
@@ -278,6 +301,32 @@ class TipWidget extends \Elementor\Widget_Base
                 });
             }
         </script>
+
+        <style>
+            /* Add bounce animation */
+            @keyframes bounce {
+
+                0%,
+                20%,
+                50%,
+                80%,
+                100% {
+                    transform: translateY(0);
+                }
+
+                40% {
+                    transform: translateY(-20px);
+                }
+
+                60% {
+                    transform: translateY(-10px);
+                }
+            }
+
+            .bounce {
+                animation: bounce 1s ease;
+            }
+        </style>
 <?php
     }
 }

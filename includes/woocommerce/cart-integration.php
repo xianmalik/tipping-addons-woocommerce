@@ -11,64 +11,67 @@ class TippingCartIntegration {
     }
 
     public function add_tip_to_cart() {
-        if (!wp_verify_nonce($_POST['nonce'], 'add_tip_to_cart')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'add_tip_to_cart')) {
             wp_send_json_error('Invalid nonce');
             return;
         }
 
-        $amount = floatval($_POST['amount']);
-        $post_id = intval($_POST['post_id']);
-        $post_title = get_the_title($post_id);
+        $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
+        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        $page_title = isset($_POST['page_title']) ? sanitize_text_field($_POST['page_title']) : '';
 
-        if ($amount < 1 || !$post_id) {
-            wp_send_json_error('Invalid amount or post ID');
+        if ($amount <= 0) {
+            wp_send_json_error('Invalid amount');
             return;
         }
 
-        // Clear the entire cart first
-        // WC()->cart->empty_cart();
+        // Create a unique product name for each page
+        $product_name = sprintf('Tip for: %s', $page_title);
 
-        $cart_item_data = [
-            'custom_price' => $amount,
-            'is_tip' => true,
-            'post_title' => $post_title,
-            'post_id' => $post_id
-        ];
+        // Create or get the product - Fix: Call the method using $this
+        $product_id = $this->create_tip_product($product_name, $amount, $post_id);
 
-        $product_id = $this->get_or_create_tip_product($post_title);
-        
         if (!$product_id) {
-            wp_send_json_error('Failed to create tip product');
+            wp_send_json_error('Failed to create product');
             return;
         }
 
-        WC()->cart->add_to_cart($product_id, 1, 0, array(), $cart_item_data);
+        // Add to cart
+        WC()->cart->add_to_cart($product_id, 1, 0, array(), array(
+            'tip_amount' => $amount,
+            'post_id' => $post_id,
+            'page_title' => $page_title
+        ));
+
         wp_send_json_success();
-        error_log('------------------------- ending adding to cart --------');
     }
 
-    private function get_or_create_tip_product($post_title = '')
+    private function create_tip_product($product_name, $amount, $post_id)
     {
-        $product_id = get_option('tipping_product_id');
-        $product = $product_id ? wc_get_product($product_id) : null;
+        // Create a unique SKU
+        $sku = 'TIP-' . $post_id . '-' . uniqid();
 
-        if (!$product || !$product->exists()) {
-            $product = new \WC_Product_Simple();
-            $product->set_name(sprintf(__('Tip for: %s', 'tipping-addons-jetengine'), $post_title));
-            $product->set_status('publish');  // Changed from 'private' to 'publish'
+        // Check if product exists with this SKU
+        $product_id = wc_get_product_id_by_sku($sku);
+
+        if (!$product_id) {
+            $product = new WC_Product_Simple();
+            $product->set_name($product_name);
+            $product->set_status('publish');
             $product->set_catalog_visibility('hidden');
-            $product->set_price(0);
-            $product->set_regular_price(0);
+            $product->set_price($amount);
+            $product->set_regular_price($amount);
+            $product->set_sku($sku);
             $product->set_virtual(true);
-            $product->set_sold_individually(true);
-            $product_id = $product->save();
 
-            if ($product_id) {
-                update_option('tipping_product_id', $product_id);
+            // Set featured image if available
+            if (!empty($_POST['featured_image_id'])) {
+                $product->set_image_id(intval($_POST['featured_image_id']));
             }
-        } else {
-            $product->set_name(sprintf(__('Tip for: %s', 'tipping-addons-jetengine'), $post_title));
+
             $product->save();
+
+            return $product->get_id();
         }
 
         return $product_id;
