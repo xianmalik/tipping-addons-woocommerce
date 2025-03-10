@@ -1,10 +1,10 @@
 .sticky-cart-icon {
     position: fixed;
-    top: 20%;
+    top: 50px;
     right: 20px;
     background: transparent;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -12,7 +12,7 @@
     z-index: 999;
     text-decoration: none;
     transition: transform 0.3s ease;
-    padding: 10px;
+    padding: 0;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     background: #fafafa;
 }
@@ -29,14 +29,14 @@
 
 .cart-item-count {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: -2px;
+    right: -2px;
     background: #ff4444;
     color: white;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    font-size: 11px;
     display: flex;
     align-items: center;
     justify-content: center;

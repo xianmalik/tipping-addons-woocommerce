@@ -22,7 +22,7 @@ class StickyCart {
         if (!is_cart() && !is_checkout()) {
             $cart_count = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
             $cart_url = wc_get_cart_url();
-            $icon_url = plugins_url('/includes/assets/wmremove-transformed.png', dirname(dirname(__FILE__)));
+            $icon_url = plugins_url('/includes/assets/cart-logo.png', dirname(dirname(__FILE__)));
             
             include plugin_dir_path(__FILE__) . 'templates/sticky-cart.php';
         }
