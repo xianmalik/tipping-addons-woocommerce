@@ -47,8 +47,8 @@ add_action('woocommerce_thankyou', function ($order_id) {
   if (!$tip_product_id) return;
 
   // Clear cart after successful order
-  WC()->cart->remove_cart_item_by_id($tip_product_id);
-  WC()->cart->empty_cart();
+  // WC()->cart->remove_cart_item_by_id($tip_product_id);
+  // WC()->cart->empty_cart();
 });
 
 /**
