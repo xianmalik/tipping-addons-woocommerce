@@ -60,57 +60,67 @@ class TippingCartIntegration {
         // Check if product exists with this SKU
         $product_id = wc_get_product_id_by_sku($sku);
 
-        // Get song files from JetEngine meta
-        $song_mp3 = get_post_meta($post_id, 'song_mp3', true);
-        $song_wav = get_post_meta($post_id, 'song_wav', true);
+        // Get all song files from post meta
+        $post_meta = get_post_meta($post_id);
+        $song_mp3 = isset($post_meta['song_mp3'][0]) ? wp_get_attachment_url($post_meta['song_mp3'][0]) : '';
+        $song_wav = isset($post_meta['song_wav'][0]) ? wp_get_attachment_url($post_meta['song_wav'][0]) : '';
+        $song_file = isset($post_meta['song_file'][0]) ? wp_get_attachment_url($post_meta['song_file'][0]) : '';
+
+        // Prepare downloadable files in WooCommerce format
+        $downloads = array();
+        if ($song_mp3) {
+            $downloads[md5($song_mp3)] = array(
+                'id' => md5($song_mp3),
+                'name' => 'MP3 Version',
+                'file' => $song_mp3,
+                'previous_hash' => ''
+            );
+        }
+        if ($song_wav) {
+            $downloads[md5($song_wav)] = array(
+                'id' => md5($song_wav),
+                'name' => 'WAV Version',
+                'file' => $song_wav,
+                'previous_hash' => ''
+            );
+        }
+        if ($song_file) {
+            $downloads[md5($song_file)] = array(
+                'id' => md5($song_file),
+                'name' => 'Original File',
+                'file' => $song_file,
+                'previous_hash' => ''
+            );
+        }
 
         if (!$product_id) {
             $product = new WC_Product_Simple();
             $product->set_name($product_name);
             $product->set_status('publish');
             $product->set_catalog_visibility('hidden');
-            $product->set_price($amount);
-            $product->set_regular_price($amount);
             $product->set_sku($sku);
             $product->set_virtual(true);
             $product->set_downloadable(true);
-
-            // Set featured image if available
-            if (!empty($_POST['featured_image_id'])) {
-                $product->set_image_id(intval($_POST['featured_image_id']));
-            }
-
-            // Add downloadable files
-            $downloads = array();
-            if ($song_mp3) {
-                $downloads['mp3'] = array(
-                    'name' => 'MP3 Version',
-                    'file' => $song_mp3
-                );
-            }
-            if ($song_wav) {
-                $downloads['wav'] = array(
-                    'name' => 'WAV Version',
-                    'file' => $song_wav
-                );
-            }
-            $product->set_downloads($downloads);
-
-            // Set download limit and expiry
-            $product->set_download_limit(-1); // unlimited downloads
-            $product->set_download_expiry(-1); // never expires
-
-            $product->save();
-
-            return $product->get_id();
         } else {
             $product = wc_get_product($product_id);
-            $product->set_price($amount);
-            $product->set_regular_price($amount);
-            $product->save();
+            $product->set_downloadable(true);
         }
 
-        return $product_id;
+        // Always update these properties
+        $product->set_price($amount);
+        $product->set_regular_price($amount);
+        $product->set_downloads($downloads);
+        $product->set_download_limit(-1);
+        $product->set_download_expiry(-1);
+
+        // Set featured image if available
+        if (!empty($_POST['featured_image_id'])) {
+            $product->set_image_id(intval($_POST['featured_image_id']));
+        }
+
+        $product->save();
+
+        return $product->get_id();
     }
 
     public function process_tip_order($order_id, $posted_data, $order) {
