@@ -67,14 +67,27 @@ class ArtistVendor {
     }
     
     public function enqueue_scripts() {
+        // Only enqueue on account pages
         if (is_account_page()) {
-            wp_enqueue_script('artist-vendor-js', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js', ['jquery'], '1.0.0', true);
-            wp_enqueue_style('artist-vendor-css', plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/artist-vendor.css', [], '1.0.0');
-            
-            wp_localize_script('artist-vendor-js', 'artist_vendor_params', [
+            wp_enqueue_style(
+                'tipping-addons-my-account',
+                plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/my-account.css',
+                array(),
+                '1.0.0'
+            );
+
+            wp_enqueue_script(
+                'tipping-addons-artist-vendor',
+                plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js',
+                array('jquery'),
+                '1.0.0',
+                true
+            );
+
+            wp_localize_script('tipping-addons-artist-vendor', 'artist_vendor_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('artist_vendor_nonce')
-            ]);
+            ));
         }
     }
     
