@@ -1,0 +1,96 @@
+/* Artist Vendor Styles */
+.artist-registration-form,
+#add-artist-product-form,
+#edit-artist-product-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.artist-registration-form label,
+#add-artist-product-form label,
+#edit-artist-product-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.artist-registration-form input[type="text"],
+.artist-registration-form input[type="email"],
+.artist-registration-form input[type="password"],
+#add-artist-product-form input[type="text"],
+#add-artist-product-form input[type="number"],
+#add-artist-product-form textarea,
+#edit-artist-product-form input[type="text"],
+#edit-artist-product-form input[type="number"],
+#edit-artist-product-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+}
+
+.artist-registration-form .required,
+#add-artist-product-form .required,
+#edit-artist-product-form .required {
+    color: #f00;
+}
+
+.registration-message,
+.form-message {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.registration-message.error,
+.form-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.registration-message.success,
+.form-message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.current-image {
+    margin-bottom: 10px;
+}
+
+.current-image img {
+    max-width: 100px;
+    height: auto;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.current-file {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+form.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Artist Sales Table */
+.woocommerce-account .woocommerce-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.woocommerce-account .woocommerce-orders-table th,
+.woocommerce-account .woocommerce-orders-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.woocommerce-account .woocommerce-orders-table th {
+    background-color: #f8f8f8;
+}

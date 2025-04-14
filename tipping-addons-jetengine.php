@@ -58,6 +58,10 @@ class TippingAddonsJetEngine
         require_once plugin_dir_path(__FILE__) . 'includes/admin/admin-panel.php';
         require_once plugin_dir_path(__FILE__) . 'includes/woocommerce/cart-integration.php';
         require_once plugin_dir_path(__FILE__) . 'includes/frontend/sticky-cart.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/users/artist-vendor.php';
+
+        // Include the performance fixes
+        require_once plugin_dir_path(__FILE__) . 'includes/admin/performance-fixes.php';
 
         // Initialize sticky cart
         new StickyCart();
@@ -73,6 +77,49 @@ class TippingAddonsJetEngine
         if (is_admin()) {
             new TippingAdminPanel();
         }
+        
+        // Register activation hook for database setup
+        register_activation_hook(__FILE__, [$this, 'plugin_activation']);
+    }
+    
+    public function plugin_activation() {
+        // Create database table for song tips if it doesn't exist
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'song_tips';
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            song_id bigint(20) NOT NULL,
+            tip_amount decimal(10,2) NOT NULL,
+            customer_name varchar(255) NOT NULL,
+            customer_id bigint(20) NOT NULL,
+            order_id bigint(20) NOT NULL,
+            song_mp3 varchar(255) DEFAULT '',
+            song_wav varchar(255) DEFAULT '',
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+        
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+        
+        // Create artist role
+        add_role(
+            'music_artist_vendor',
+            'Music Artist - Vendor',
+            [
+                'read' => true,
+                'edit_posts' => false,
+                'delete_posts' => false,
+                'publish_posts' => false,
+                'upload_files' => true,
+            ]
+        );
+        
+        // Flush rewrite rules
+        flush_rewrite_rules();
     }
 
     public function register_widgets($widgets_manager)
