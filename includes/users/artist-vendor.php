@@ -73,15 +73,32 @@ class ArtistVendor
 
     public function enqueue_scripts()
     {
-        // Only enqueue on account pages
-        if (is_account_page()) {
-            wp_enqueue_style(
-                'tipping-addons-my-account',
-                plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/my-account.css',
-                array(),
-                '1.0.0'
-            );
+        // Enqueue login form styles globally on all pages
+        wp_enqueue_style(
+            'tipping-addons-woocommerce-login',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/woocommerce-login.css',
+            array(),
+            '1.0.0'
+        );
 
+        // Enqueue artist vendor styles globally
+        wp_enqueue_style(
+            'tipping-addons-registration',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/artist-vendor.css',
+            array(),
+            '1.0.1'
+        );
+
+        // Enqueue my account styles globally
+        wp_enqueue_style(
+            'tipping-addons-my-account',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/my-account.css',
+            array(),
+            '1.0.0'
+        );
+
+        // Only enqueue account-specific scripts on account pages
+        if (is_account_page()) {
             wp_enqueue_script(
                 'tipping-addons-artist-vendor',
                 plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js',

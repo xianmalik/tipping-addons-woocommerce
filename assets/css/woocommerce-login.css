@@ -1,0 +1,162 @@
+/* WooCommerce Login Form Styling */
+.woocommerce-form-login,
+.woocommerce form.login,
+.woocommerce form.register {
+    max-width: 800px;
+    margin: 0 auto !important;
+    padding: 30px !important;
+    background-color: #fff;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+    border: none !important;
+}
+
+.woocommerce-form-login h2,
+.woocommerce form.login h2,
+.woocommerce form.register h2,
+.woocommerce-form-login legend,
+.woocommerce form.login legend,
+.woocommerce form.register legend {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.woocommerce-form-login label,
+.woocommerce form.login label,
+.woocommerce form.register label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Enhanced input styling to match the modern design */
+.woocommerce-form-login input[type="text"],
+.woocommerce-form-login input[type="email"],
+.woocommerce-form-login input[type="password"],
+.woocommerce-form-login input[type="tel"],
+.woocommerce form.login input[type="text"],
+.woocommerce form.login input[type="email"],
+.woocommerce form.login input[type="password"],
+.woocommerce form.login input[type="tel"],
+.woocommerce form.register input[type="text"],
+.woocommerce form.register input[type="email"],
+.woocommerce form.register input[type="password"],
+.woocommerce form.register input[type="tel"] {
+    width: 100%;
+    padding: 16px !important;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+    background-color: #fff !important;
+}
+
+/* Focus state for inputs */
+.woocommerce-form-login input:focus,
+.woocommerce form.login input:focus,
+.woocommerce form.register input:focus {
+    outline: none !important;
+    border-color: #9fe870 !important;
+    box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2) !important;
+}
+
+/* Button styling to match the green button in the artist form */
+.woocommerce-form-login .woocommerce-form-login__submit,
+.woocommerce form.login .woocommerce-form-login__submit,
+.woocommerce form.login button[type="submit"],
+.woocommerce form.register button[type="submit"] {
+    width: 100% !important;
+    background-color: #9fe870 !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    font-size: 18px !important;
+    padding: 16px !important;
+    border: none !important;
+    border-radius: 50px !important;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    line-height: 1 !important;
+    text-transform: none !important;
+}
+
+.woocommerce-form-login .woocommerce-form-login__submit:hover,
+.woocommerce form.login .woocommerce-form-login__submit:hover,
+.woocommerce form.login button[type="submit"]:hover,
+.woocommerce form.register button[type="submit"]:hover {
+    background-color: #80e142 !important;
+}
+
+/* Checkbox styling */
+.woocommerce-form-login .woocommerce-form-login__rememberme,
+.woocommerce form.login .woocommerce-form-login__rememberme {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.woocommerce-form-login .woocommerce-form-login__rememberme input,
+.woocommerce form.login .woocommerce-form-login__rememberme input {
+    margin-right: 8px;
+}
+
+/* Lost password link */
+.woocommerce-form-login .woocommerce-LostPassword,
+.woocommerce form.login .woocommerce-LostPassword {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 15px;
+}
+
+.woocommerce-form-login .woocommerce-LostPassword a,
+.woocommerce form.login .woocommerce-LostPassword a {
+    color: #333;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.woocommerce-form-login .woocommerce-LostPassword a:hover,
+.woocommerce form.login .woocommerce-LostPassword a:hover {
+    color: #80e142;
+}
+
+/* Form row spacing */
+.woocommerce-form-login p,
+.woocommerce form.login p,
+.woocommerce form.register p {
+    margin-bottom: 20px !important;
+}
+
+/* Password field container for potential future password toggle */
+.password-field-container {
+    position: relative;
+}
+
+/* Social login buttons if you add them later */
+.social-login-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.social-login-divider:before,
+.social-login-divider:after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.social-login-divider span {
+    padding: 0 10px;
+    color: #666;
+    font-size: 14px;
+}
