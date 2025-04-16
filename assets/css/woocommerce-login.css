@@ -63,7 +63,7 @@
 .woocommerce form.login input:focus,
 .woocommerce form.register input:focus {
     outline: none !important;
-    border-color: #9fe870 !important;
+    border-color: #0EA0E4 !important;
     box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2) !important;
 }
 
@@ -73,7 +73,7 @@
 .woocommerce form.login button[type="submit"],
 .woocommerce form.register button[type="submit"] {
     width: 100% !important;
-    background-color: #9fe870 !important;
+    background-color: #0EA0E4 !important;
     color: #000 !important;
     font-weight: 600 !important;
     font-size: 18px !important;
@@ -92,7 +92,7 @@
 .woocommerce form.login .woocommerce-form-login__submit:hover,
 .woocommerce form.login button[type="submit"]:hover,
 .woocommerce form.register button[type="submit"]:hover {
-    background-color: #80e142 !important;
+    background-color: #108dc7 !important;
 }
 
 /* Checkbox styling */
@@ -126,7 +126,7 @@
 
 .woocommerce-form-login .woocommerce-LostPassword a:hover,
 .woocommerce form.login .woocommerce-LostPassword a:hover {
-    color: #80e142;
+    color: #108dc7;
 }
 
 /* Form row spacing */

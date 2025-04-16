@@ -44,11 +44,11 @@
 
 .woocommerce-account .woocommerce-MyAccount-navigation ul li a:hover {
     background-color: #f9f9f9;
-    color: #a3e635;
+    color: #0EA0E4;
 }
 
 .woocommerce-account .woocommerce-MyAccount-navigation ul li.is-active a {
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
 }
@@ -76,7 +76,7 @@
 /* Buttons */
 .woocommerce-account .woocommerce-MyAccount-content .button,
 .woocommerce-account .woocommerce-MyAccount-content button[type="submit"] {
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
     padding: 12px 20px;
@@ -92,7 +92,7 @@
 
 .woocommerce-account .woocommerce-MyAccount-content .button:hover,
 .woocommerce-account .woocommerce-MyAccount-content button[type="submit"]:hover {
-    background-color: #86cc16;
+    background-color: #108dc7;
 }
 
 /* Tables */
@@ -235,7 +235,7 @@
 #edit-artist-product-form input[type="file"]::-webkit-file-upload-button,
 .woocommerce-MyAccount-content input[type="file"]::-webkit-file-upload-button,
 .manage-products-content input[type="file"]::-webkit-file-upload-button {
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
     padding: 10px 15px;
@@ -251,7 +251,7 @@
 #edit-artist-product-form input[type="file"]::-webkit-file-upload-button:hover,
 .woocommerce-MyAccount-content input[type="file"]::-webkit-file-upload-button:hover,
 .manage-products-content input[type="file"]::-webkit-file-upload-button:hover {
-    background-color: #86cc16;
+    background-color: #108dc7;
 }
 
 /* Firefox specific styling */
@@ -260,7 +260,7 @@
 #edit-artist-product-form input[type="file"]::file-selector-button,
 .woocommerce-MyAccount-content input[type="file"]::file-selector-button,
 .manage-products-content input[type="file"]::file-selector-button {
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
     padding: 10px 15px;
@@ -276,7 +276,7 @@
 #edit-artist-product-form input[type="file"]::file-selector-button:hover,
 .woocommerce-MyAccount-content input[type="file"]::file-selector-button:hover,
 .manage-products-content input[type="file"]::file-selector-button:hover {
-    background-color: #86cc16;
+    background-color: #108dc7;
 }
 
 /* Current file display */
@@ -309,7 +309,7 @@
 #edit-artist-product-form .current-file a:hover,
 .woocommerce-MyAccount-content .current-file a:hover,
 .manage-products-content .current-file a:hover {
-    color: #a3e635;
+    color: #0EA0E4;
 }
 
 /* Current image display */
@@ -338,7 +338,7 @@
 .woocommerce-account form .form-row textarea:focus,
 .woocommerce-account form .form-row select:focus {
     outline: none;
-    border-color: #a3e635;
+    border-color: #0EA0E4;
     box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
 }
 
@@ -359,7 +359,7 @@
 
 /* Downloads */
 .woocommerce-account .woocommerce-MyAccount-downloads-file {
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
     padding: 8px 15px;
@@ -374,7 +374,7 @@
 }
 
 .woocommerce-account .woocommerce-MyAccount-downloads-file:hover {
-    background-color: #86cc16;
+    background-color: #108dc7;
 }
 
 /* Artist specific sections */
@@ -417,7 +417,7 @@
 
 #add-artist-product-form button[type="submit"],
 #edit-artist-product-form button[type="submit"] {
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
     font-size: 18px;
@@ -432,7 +432,7 @@
 
 #add-artist-product-form button[type="submit"]:hover,
 #edit-artist-product-form button[type="submit"]:hover {
-    background-color: #86cc16;
+    background-color: #108dc7;
 }
 
 /* Form message styling */
@@ -506,13 +506,13 @@
 .woocommerce-ResetPassword input[type="text"]:focus,
 .woocommerce-ResetPassword input[type="password"]:focus {
     outline: none;
-    border-color: #a3e635;
+    border-color: #0EA0E4;
     box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
 }
 
 .woocommerce-account .woocommerce-ResetPassword .woocommerce-Button,
 .woocommerce-ResetPassword .woocommerce-Button {
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
     padding: 14px 20px;
@@ -530,7 +530,7 @@
 
 .woocommerce-account .woocommerce-ResetPassword .woocommerce-Button:hover,
 .woocommerce-ResetPassword .woocommerce-Button:hover {
-    background-color: #86cc16;
+    background-color: #108dc7;
 }
 
 /* Password strength meter */

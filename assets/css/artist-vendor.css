@@ -55,7 +55,7 @@
 #edit-artist-product-form input:focus,
 #edit-artist-product-form textarea:focus {
     outline: none;
-    border-color: #a3e635;
+    border-color: #0EA0E4;
     box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
 }
 
@@ -64,7 +64,7 @@
 #add-artist-product-form button[type="submit"],
 #edit-artist-product-form button[type="submit"] {
     width: 100%;
-    background-color: #a3e635;
+    background-color: #0EA0E4;
     color: #000;
     font-weight: 600;
     font-size: 18px;
@@ -80,7 +80,7 @@
 .artist-registration-form .register-button:hover,
 #add-artist-product-form button[type="submit"]:hover,
 #edit-artist-product-form button[type="submit"]:hover {
-    background-color: #86cc16;
+    background-color: #108dc7;
 }
 
 /* Social login buttons styling */
@@ -189,7 +189,7 @@
 }
 
 .login-link a:hover {
-    color: #86cc16;
+    color: #108dc7;
 }
 
 .current-image {
