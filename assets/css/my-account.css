@@ -189,6 +189,139 @@
     box-sizing: border-box;
 }
 
+/* File input styling - enhanced for manage products page */
+.woocommerce-account form .form-row input[type="file"],
+#add-artist-product-form input[type="file"],
+#edit-artist-product-form input[type="file"],
+.woocommerce-MyAccount-content input[type="file"],
+.manage-products-content input[type="file"] {
+    padding: 0;
+    border: none;
+    background: transparent;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Style the native file input */
+.woocommerce-account input[type="file"],
+#add-artist-product-form input[type="file"],
+#edit-artist-product-form input[type="file"],
+.woocommerce-MyAccount-content input[type="file"],
+.manage-products-content input[type="file"] {
+    color: #333;
+    font-size: 15px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+/* Style the file input button part */
+.woocommerce-account input[type="file"]::-webkit-file-upload-button,
+#add-artist-product-form input[type="file"]::-webkit-file-upload-button,
+#edit-artist-product-form input[type="file"]::-webkit-file-upload-button,
+.woocommerce-MyAccount-content input[type="file"]::-webkit-file-upload-button,
+.manage-products-content input[type="file"]::-webkit-file-upload-button {
+    background-color: #a3e635;
+    color: #000;
+    font-weight: 600;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+}
+
+.woocommerce-account input[type="file"]::-webkit-file-upload-button:hover,
+#add-artist-product-form input[type="file"]::-webkit-file-upload-button:hover,
+#edit-artist-product-form input[type="file"]::-webkit-file-upload-button:hover,
+.woocommerce-MyAccount-content input[type="file"]::-webkit-file-upload-button:hover,
+.manage-products-content input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #86cc16;
+}
+
+/* Firefox specific styling */
+.woocommerce-account input[type="file"]::file-selector-button,
+#add-artist-product-form input[type="file"]::file-selector-button,
+#edit-artist-product-form input[type="file"]::file-selector-button,
+.woocommerce-MyAccount-content input[type="file"]::file-selector-button,
+.manage-products-content input[type="file"]::file-selector-button {
+    background-color: #a3e635;
+    color: #000;
+    font-weight: 600;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+}
+
+.woocommerce-account input[type="file"]::file-selector-button:hover,
+#add-artist-product-form input[type="file"]::file-selector-button:hover,
+#edit-artist-product-form input[type="file"]::file-selector-button:hover,
+.woocommerce-MyAccount-content input[type="file"]::file-selector-button:hover,
+.manage-products-content input[type="file"]::file-selector-button:hover {
+    background-color: #86cc16;
+}
+
+/* Current file display */
+.woocommerce-account .current-file,
+#add-artist-product-form .current-file,
+#edit-artist-product-form .current-file,
+.woocommerce-MyAccount-content .current-file,
+.manage-products-content .current-file {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.woocommerce-account .current-file a,
+#add-artist-product-form .current-file a,
+#edit-artist-product-form .current-file a,
+.woocommerce-MyAccount-content .current-file a,
+.manage-products-content .current-file a {
+    color: #333;
+    text-decoration: underline;
+    margin-left: 5px;
+}
+
+.woocommerce-account .current-file a:hover,
+#add-artist-product-form .current-file a:hover,
+#edit-artist-product-form .current-file a:hover,
+.woocommerce-MyAccount-content .current-file a:hover,
+.manage-products-content .current-file a:hover {
+    color: #a3e635;
+}
+
+/* Current image display */
+.woocommerce-account .current-image,
+#add-artist-product-form .current-image,
+#edit-artist-product-form .current-image,
+.woocommerce-MyAccount-content .current-image,
+.manage-products-content .current-image {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.woocommerce-account .current-image img,
+#add-artist-product-form .current-image img,
+#edit-artist-product-form .current-image img,
+.woocommerce-MyAccount-content .current-image img,
+.manage-products-content .current-image img {
+    max-width: 150px;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 5px;
+}
+
 .woocommerce-account form .form-row input:focus,
 .woocommerce-account form .form-row textarea:focus,
 .woocommerce-account form .form-row select:focus {
