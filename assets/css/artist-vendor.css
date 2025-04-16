@@ -4,16 +4,31 @@
 #edit-artist-product-form {
     max-width: 800px;
     margin: 0 auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.artist-registration-form h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
 }
 
 .artist-registration-form label,
 #add-artist-product-form label,
 #edit-artist-product-form label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 16px;
 }
 
+/* Enhanced input styling to match the modern design */
 .artist-registration-form input[type="text"],
 .artist-registration-form input[type="email"],
 .artist-registration-form input[type="password"],
@@ -24,8 +39,98 @@
 #edit-artist-product-form input[type="number"],
 #edit-artist-product-form textarea {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+
+/* Focus state for inputs */
+.artist-registration-form input:focus,
+#add-artist-product-form input:focus,
+#add-artist-product-form textarea:focus,
+#edit-artist-product-form input:focus,
+#edit-artist-product-form textarea:focus {
+    outline: none;
+    border-color: #a3e635;
+    box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
+}
+
+/* Button styling to match the green button in the image */
+.artist-registration-form .register-button,
+#add-artist-product-form button[type="submit"],
+#edit-artist-product-form button[type="submit"] {
+    width: 100%;
+    background-color: #a3e635;
+    color: #000;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 16px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.artist-registration-form .register-button:hover,
+#add-artist-product-form button[type="submit"]:hover,
+#edit-artist-product-form button[type="submit"]:hover {
+    background-color: #86cc16;
+}
+
+/* Social login buttons styling */
+.social-login-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.social-login-divider:before,
+.social-login-divider:after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.social-login-divider span {
+    padding: 0 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.social-login-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.social-login-button {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 50px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s;
+    font-weight: 500;
+}
+
+.social-login-button:hover {
+    background-color: #f5f5f5;
+}
+
+.social-login-button svg {
+    margin-right: 8px;
 }
 
 .artist-registration-form .required,
@@ -36,9 +141,9 @@
 
 .registration-message,
 .form-message {
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .registration-message.error,
@@ -55,6 +160,38 @@
     border: 1px solid #a5d6a7;
 }
 
+/* Password visibility toggle */
+.password-field-container {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 15px;
+}
+
+.login-link a {
+    color: #333;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.login-link a:hover {
+    color: #86cc16;
+}
+
 .current-image {
     margin-bottom: 10px;
 }
@@ -68,9 +205,10 @@
 
 .current-file {
     margin-bottom: 10px;
-    padding: 5px 10px;
+    padding: 10px;
     background: #f5f5f5;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 14px;
 }
 
 form.loading {
@@ -82,15 +220,23 @@ form.loading {
 .woocommerce-account .woocommerce-orders-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .woocommerce-account .woocommerce-orders-table th,
 .woocommerce-account .woocommerce-orders-table td {
-    padding: 12px;
+    padding: 15px;
     text-align: left;
     border-bottom: 1px solid #e5e5e5;
 }
 
 .woocommerce-account .woocommerce-orders-table th {
     background-color: #f8f8f8;
+    font-weight: 600;
+}
+
+.woocommerce-account .woocommerce-orders-table tr:hover {
+    background-color: #f9f9f9;
 }
