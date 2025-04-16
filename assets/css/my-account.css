@@ -576,3 +576,68 @@
     color: #666;
     font-style: italic;
 }
+
+/* Login page styling */
+.woocommerce-account h1.entry-title,
+.woocommerce-account .woocommerce h2 {
+    display: none;
+}
+
+.woocommerce-account .woocommerce {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px auto;
+    max-width: 1200px;
+}
+
+.woocommerce-account .woocommerce .woocommerce-form-login {
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+/* Site logo styling */
+.woocommerce-account .woocommerce .woocommerce-form-login::before {
+    content: '';
+    display: block;
+    background-image: url('/wp-content/plugins/tipping-addons-jetengine/includes/assets/logo.webp'); /* Updated to webp format */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 180px;
+    height: 60px;
+    margin: 0 auto 30px;
+}
+
+/* Form styling improvements */
+.woocommerce-account .woocommerce-form-login .form-row {
+    margin-bottom: 20px;
+}
+
+.woocommerce-account .woocommerce-form-login .woocommerce-form-login__submit {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.woocommerce-account .woocommerce-form-login .woocommerce-LostPassword {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.woocommerce-account .woocommerce-form-login .woocommerce-LostPassword a {
+    color: #555;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.woocommerce-account .woocommerce-form-login .woocommerce-LostPassword a:hover {
+    color: #a3e635;
+}
