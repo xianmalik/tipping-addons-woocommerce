@@ -63,6 +63,9 @@ class TippingAddonsJetEngine
         // Include the performance fixes
         require_once plugin_dir_path(__FILE__) . 'includes/admin/performance-fixes.php';
 
+        // Ensure artist role exists
+        $this->ensure_artist_role_exists();
+
         // Initialize sticky cart
         new StickyCart();
 
@@ -80,6 +83,27 @@ class TippingAddonsJetEngine
         
         // Register activation hook for database setup
         register_activation_hook(__FILE__, [$this, 'plugin_activation']);
+    }
+    
+    /**
+     * Ensure the artist role exists
+     */
+    public function ensure_artist_role_exists() {
+        // Check if the role already exists
+        if (!get_role('music_artist_vendor')) {
+            // Create artist role if it doesn't exist
+            add_role(
+                'music_artist_vendor',
+                'Music Artist - Vendor',
+                [
+                    'read' => true,
+                    'edit_posts' => false,
+                    'delete_posts' => false,
+                    'publish_posts' => false,
+                    'upload_files' => true,
+                ]
+            );
+        }
     }
     
     public function plugin_activation() {
@@ -106,17 +130,7 @@ class TippingAddonsJetEngine
         dbDelta($sql);
         
         // Create artist role
-        add_role(
-            'music_artist_vendor',
-            'Music Artist - Vendor',
-            [
-                'read' => true,
-                'edit_posts' => false,
-                'delete_posts' => false,
-                'publish_posts' => false,
-                'upload_files' => true,
-            ]
-        );
+        $this->ensure_artist_role_exists();
         
         // Flush rewrite rules
         flush_rewrite_rules();
