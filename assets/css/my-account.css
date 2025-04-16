@@ -441,3 +441,122 @@
     color: #2e7d32;
     border: 1px solid #a5d6a7;
 }
+
+/* Password Reset Form Styling */
+.woocommerce-account .woocommerce-ResetPassword,
+.woocommerce-ResetPassword {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.woocommerce-account .woocommerce-ResetPassword p:first-of-type,
+.woocommerce-ResetPassword p:first-of-type {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.woocommerce-account .woocommerce-ResetPassword .woocommerce-form-row,
+.woocommerce-ResetPassword .woocommerce-form-row {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.woocommerce-account .woocommerce-ResetPassword label,
+.woocommerce-ResetPassword label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 16px;
+}
+
+.woocommerce-account .woocommerce-ResetPassword input[type="text"],
+.woocommerce-account .woocommerce-ResetPassword input[type="password"],
+.woocommerce-ResetPassword input[type="text"],
+.woocommerce-ResetPassword input[type="password"] {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box;
+}
+
+.woocommerce-account .woocommerce-ResetPassword input[type="text"]:focus,
+.woocommerce-account .woocommerce-ResetPassword input[type="password"]:focus,
+.woocommerce-ResetPassword input[type="text"]:focus,
+.woocommerce-ResetPassword input[type="password"]:focus {
+    outline: none;
+    border-color: #a3e635;
+    box-shadow: 0 0 0 2px rgba(163, 230, 53, 0.2);
+}
+
+.woocommerce-account .woocommerce-ResetPassword .woocommerce-Button,
+.woocommerce-ResetPassword .woocommerce-Button {
+    background-color: #a3e635;
+    color: #000;
+    font-weight: 600;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 16px;
+    line-height: 1;
+    width: 100%;
+    text-align: center;
+}
+
+.woocommerce-account .woocommerce-ResetPassword .woocommerce-Button:hover,
+.woocommerce-ResetPassword .woocommerce-Button:hover {
+    background-color: #86cc16;
+}
+
+/* Password strength meter */
+.woocommerce-password-strength {
+    margin-top: 10px;
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.woocommerce-password-strength.short {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.woocommerce-password-strength.bad {
+    background-color: #fff8e1;
+    color: #f57f17;
+    border: 1px solid #ffe082;
+}
+
+.woocommerce-password-strength.good {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
+}
+
+.woocommerce-password-strength.strong {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.woocommerce-password-hint {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+}
