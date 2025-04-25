@@ -450,37 +450,42 @@ class ArtistVendor
         $products = get_posts($args);
 
         ?>
-        <h2><?php _e('Manage Your Products', 'tipping-addons-jetengine'); ?></h2>
-
-        <p><a href="<?php echo wc_get_account_endpoint_url('add-product'); ?>" class="button"><?php _e('Add New Product', 'tipping-addons-jetengine'); ?></a></p>
+        <div class="product-management-header">
+            <h2><?php _e('Products', 'tipping-addons-jetengine'); ?></h2>
+            <a href="<?php echo wc_get_account_endpoint_url('add-product'); ?>" class="see-all"><?php _e('Add New', 'tipping-addons-jetengine'); ?></a>
+        </div>
 
         <?php if (!empty($products)) : ?>
-            <table class="woocommerce-orders-table">
-                <thead>
-                    <tr>
-                        <th><?php _e('Product', 'tipping-addons-jetengine'); ?></th>
-                        <th><?php _e('Price', 'tipping-addons-jetengine'); ?></th>
-                        <th><?php _e('Status', 'tipping-addons-jetengine'); ?></th>
-                        <th><?php _e('Actions', 'tipping-addons-jetengine'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($products as $product) :
-                        $wc_product = wc_get_product($product->ID);
-                    ?>
-                        <tr>
-                            <td>
-                                <a href="<?php echo get_permalink($product->ID); ?>"><?php echo esc_html($product->post_title); ?></a>
-                            </td>
-                            <td><?php echo $wc_product->get_price_html(); ?></td>
-                            <td><?php echo ucfirst($product->post_status); ?></td>
-                            <td>
-                                <a href="<?php echo add_query_arg('product_id', $product->ID, wc_get_account_endpoint_url('edit-product')); ?>" class="button"><?php _e('Edit', 'tipping-addons-jetengine'); ?></a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <div class="product-list">
+                <?php foreach ($products as $product) :
+                    $wc_product = wc_get_product($product->ID);
+                    $status_class = $product->post_status === 'publish' ? 'status-live' : 'status-pending';
+                ?>
+                    <div class="product-item">
+                        <div class="product-icon">
+                            <?php echo $wc_product->get_image('thumbnail'); ?>
+                        </div>
+                        <div class="product-details">
+                            <div class="product-main">
+                                <h3><?php echo esc_html($product->post_title); ?></h3>
+                                <span class="product-date"><?php echo get_the_date('j M Y', $product->ID); ?></span>
+                            </div>
+                            <div class="product-meta">
+                                <span class="product-status <?php echo $status_class; ?>">
+                                    <?php echo $product->post_status === 'publish' ? 'Published' : 'Pending'; ?>
+                                </span>
+                                <span class="product-price">
+                                    <?php echo $wc_product->get_price_html(); ?>
+                                </span>
+                                <a href="<?php echo add_query_arg('product_id', $product->ID, wc_get_account_endpoint_url('edit-product')); ?>" 
+                                   class="edit-button">
+                                    <?php _e('Edit', 'tipping-addons-jetengine'); ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         <?php else : ?>
             <p><?php _e('You haven\'t created any products yet.', 'tipping-addons-jetengine'); ?></p>
         <?php endif;
