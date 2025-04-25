@@ -40,6 +40,9 @@ class ArtistVendor
 
         // Add product management capabilities to all users
         add_action('init', [$this, 'add_product_capabilities_to_users']);
+
+        // Add signup prompt to login form
+        add_action('woocommerce_login_form_start', [$this, 'add_signup_prompt_to_login']);
     }
 
     public function add_uploads_to_allowed_paths($path)
@@ -162,8 +165,7 @@ class ArtistVendor
         }
     }
 
-    public function registration_form_shortcode()
-    {
+    public function registration_form_shortcode() {
         ob_start();
 
         // If user is logged in, show a message
@@ -186,7 +188,7 @@ class ArtistVendor
             <h2><?php _e('Register as Music Artist', 'tipping-addons-jetengine'); ?></h2>
 
             <div class="registration-message"></div>
-
+            
             <form id="artist-registration-form" method="post">
                 <p>
                     <label for="artist_username"><?php _e('Username', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
@@ -957,6 +959,15 @@ class ArtistVendor
                 $role->add_cap('assign_product_terms');
             }
         }
+    }
+
+    public function add_signup_prompt_to_login() {
+        ?>
+        <p class="signup-prompt">
+            <?php _e('New to Musicbae? ', 'tipping-addons-jetengine'); ?>
+            <a href="<?php echo esc_url(site_url('/artist-registration/')); ?>"><?php _e('Sign up', 'tipping-addons-jetengine'); ?></a>
+        </p>
+        <?php
     }
 }
 
