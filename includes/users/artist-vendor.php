@@ -139,8 +139,8 @@ class ArtistVendor
                 $new_items[$key] = $item;
                 
                 if ($key === 'dashboard') {
-                    $new_items['artist-sales'] = __('My Sales', 'tipping-addons-jetengine');
-                    $new_items['manage-products'] = __('Manage Products', 'tipping-addons-jetengine');
+                    $new_items['artist-sales'] = __('My Tips', 'tipping-addons-jetengine');
+                    $new_items['manage-products'] = __('Manage Songs', 'tipping-addons-jetengine');
                 }
             }
             
@@ -400,36 +400,38 @@ class ArtistVendor
             }
         }
 
-        // Display sales data
-    ?>
-        <h2><?php _e('Your Sales', 'tipping-addons-jetengine'); ?></h2>
+        ?>
+        <div class="sales-management-header">
+            <h2><?php _e('My Tips', 'tipping-addons-jetengine'); ?></h2>
+        </div>
 
         <p><?php printf(__('Total Sales: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
-
-        <?php if (!empty($sales_data)) : ?>
-            <table class="woocommerce-orders-table">
-                <thead>
-                    <tr>
-                        <th><?php _e('Product', 'tipping-addons-jetengine'); ?></th>
-                        <th><?php _e('Quantity Sold', 'tipping-addons-jetengine'); ?></th>
-                        <th><?php _e('Total', 'tipping-addons-jetengine'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($sales_data as $product_id => $data) : ?>
-                        <tr>
-                            <td>
-                                <a href="<?php echo get_permalink($product_id); ?>"><?php echo esc_html($data['name']); ?></a>
-                            </td>
-                            <td><?php echo esc_html($data['quantity']); ?></td>
-                            <td><?php echo wc_price($data['total']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else : ?>
-            <p><?php _e('No sales yet.', 'tipping-addons-jetengine'); ?></p>
-        <?php endif;
+        
+        <div class="sales-list">
+            <?php
+                if (!empty($sales_data)) {
+                    foreach ($sales_data as $product_id => $sale): ?>
+                    <div class="sale-item">
+                        <div class="sale-details">
+                            <div class="sale-main">
+                                <!-- <?php echo var_dump($sale); ?> -->
+                                <h3><?php echo esc_html($sale['name']); ?></h3>
+                                <span class="sale-date"><?php echo date('j M Y', strtotime($sale->date_created)); ?></span>
+                            </div>
+                            <div class="sale-meta">
+                                <span class="sale-amount">
+                                    <?php echo number_format($sale['total'], 2); ?>
+                                    <span class="sale-currency">BDT</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach;
+                } else { ?>
+                <p><?php _e('No sales data available yet.', 'tipping-addons-jetengine'); ?></p>
+            <?php } ?>
+        </div>
+        <?php
     }
 
     public function manage_products_content() {
