@@ -6,8 +6,7 @@ if (!defined('ABSPATH')) {
 class ArtistVendor
 {
     // Add this to your ArtistVendor class constructor
-    public function __construct()
-    {
+    public function __construct() {
         // Create custom role on plugin activation
         register_activation_hook(plugin_dir_path(dirname(dirname(__FILE__))) . 'tipping-addons-jetengine.php', [$this, 'create_artist_role']);
 
@@ -34,10 +33,13 @@ class ArtistVendor
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
 
         // Restrict access to artist endpoints
-        add_action('template_redirect', [$this, 'restrict_artist_endpoints']);
+        add_action('template_redirect', [$this, 'check_user_logged_in']);
 
         // Add uploads directory to WooCommerce's allowed download paths
         add_filter('woocommerce_downloadable_products_folder_path', [$this, 'add_uploads_to_allowed_paths']);
+
+        // Add product management capabilities to all users
+        add_action('init', [$this, 'add_product_capabilities_to_users']);
     }
 
     public function add_uploads_to_allowed_paths($path)
@@ -128,37 +130,32 @@ class ArtistVendor
         }
     }
 
-    public function add_artist_menu_items($items)
-    {
-        // Only show these menu items to artist vendors
-        if (current_user_can('music_artist_vendor')) {
+    public function add_artist_menu_items($items) {
+        // Show menu items to all logged-in users
+        if (is_user_logged_in()) {
             $new_items = [];
-
-            // Insert our custom endpoints after the dashboard
+            
             foreach ($items as $key => $item) {
                 $new_items[$key] = $item;
-
+                
                 if ($key === 'dashboard') {
-                    $new_items['artist-sales'] = __('Artist Sales', 'tipping-addons-jetengine');
+                    $new_items['artist-sales'] = __('My Sales', 'tipping-addons-jetengine');
                     $new_items['manage-products'] = __('Manage Products', 'tipping-addons-jetengine');
                 }
             }
-
+            
             return $new_items;
         }
-
         return $items;
     }
 
-    public function restrict_artist_endpoints()
-    {
+    public function check_user_logged_in() {
         global $wp_query;
 
-        // Check if we're on one of our custom endpoints
-        $artist_endpoints = ['artist-sales', 'manage-products', 'add-product', 'edit-product'];
+        $endpoints = ['artist-sales', 'manage-products', 'add-product', 'edit-product'];
 
-        foreach ($artist_endpoints as $endpoint) {
-            if (isset($wp_query->query_vars[$endpoint]) && !current_user_can('music_artist_vendor')) {
+        foreach ($endpoints as $endpoint) {
+            if (isset($wp_query->query_vars[$endpoint]) && !is_user_logged_in()) {
                 wp_redirect(wc_get_page_permalink('myaccount'));
                 exit;
             }
@@ -345,10 +342,8 @@ class ArtistVendor
         ]);
     }
 
-    public function artist_sales_content()
-    {
-        // Check if user is an artist
-        if (!current_user_can('music_artist_vendor')) {
+    public function artist_sales_content() {
+        if (!is_user_logged_in()) {
             return;
         }
 
@@ -437,10 +432,8 @@ class ArtistVendor
         <?php endif;
     }
 
-    public function manage_products_content()
-    {
-        // Check if user is an artist
-        if (!current_user_can('music_artist_vendor')) {
+    public function manage_products_content() {
+        if (!is_user_logged_in()) {
             return;
         }
 
@@ -493,10 +486,8 @@ class ArtistVendor
         <?php endif;
     }
 
-    public function add_product_content()
-    {
-        // Check if user is an artist
-        if (!current_user_can('music_artist_vendor')) {
+    public function add_product_content() {
+        if (!is_user_logged_in()) {
             return;
         }
 
@@ -545,10 +536,8 @@ class ArtistVendor
     <?php
     }
 
-    public function edit_product_content()
-    {
-        // Check if user is an artist
-        if (!current_user_can('music_artist_vendor')) {
+    public function edit_product_content() {
+        if (!is_user_logged_in()) {
             return;
         }
 
@@ -636,16 +625,12 @@ class ArtistVendor
 <?php
     }
 
-    public function process_product_submission()
-    {
-        // Verify nonce
-        if (!isset($_POST['product_nonce']) || !wp_verify_nonce($_POST['product_nonce'], 'submit_artist_product_nonce')) {
+    public function process_product_submission() {
+        // Verify nonce and check if user is logged in
+        if (!isset($_POST['product_nonce']) || 
+            !wp_verify_nonce($_POST['product_nonce'], 'submit_artist_product_nonce') || 
+            !is_user_logged_in()) {
             wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
-        }
-
-        // Check if user is an artist
-        if (!current_user_can('music_artist_vendor')) {
-            wp_send_json_error(['message' => __('You do not have permission to add products', 'tipping-addons-jetengine')]);
         }
 
         // Validate required fields
@@ -747,16 +732,12 @@ class ArtistVendor
         ]);
     }
 
-    public function process_product_update()
-    {
-        // Verify nonce
-        if (!isset($_POST['product_nonce']) || !wp_verify_nonce($_POST['product_nonce'], 'update_artist_product_nonce')) {
+    public function process_product_update() {
+        // Verify nonce and check if user is logged in
+        if (!isset($_POST['product_nonce']) || 
+            !wp_verify_nonce($_POST['product_nonce'], 'update_artist_product_nonce') || 
+            !is_user_logged_in()) {
             wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
-        }
-
-        // Check if user is an artist
-        if (!current_user_can('music_artist_vendor')) {
-            wp_send_json_error(['message' => __('You do not have permission to edit products', 'tipping-addons-jetengine')]);
         }
 
         $product_id = intval($_POST['product_id']);
@@ -948,6 +929,27 @@ class ArtistVendor
         }
 
         return $attachment_id;
+    }
+
+    /**
+     * Add product management capabilities to all user roles
+     */
+    public function add_product_capabilities_to_users() {
+        $roles = ['subscriber', 'customer', 'contributor', 'author'];
+
+        foreach ($roles as $role_name) {
+            $role = get_role($role_name);
+            if ($role) {
+                $role->add_cap('upload_files');
+                $role->add_cap('edit_products');
+                $role->add_cap('edit_published_products');
+                $role->add_cap('delete_products');
+                $role->add_cap('publish_products');
+                $role->add_cap('read_private_products');
+                $role->add_cap('manage_product_terms');
+                $role->add_cap('assign_product_terms');
+            }
+        }
     }
 }
 

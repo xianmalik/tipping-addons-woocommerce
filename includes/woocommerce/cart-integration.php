@@ -31,19 +31,32 @@ class TippingCartIntegration {
             return;
         }
 
-        // Create a unique product name for each page
-        $product_name = sprintf('Tip for: %s', $page_title);
+        // Use the post_id as the product_id since we're on a product page
+        $product_id = $post_id;
 
-        // Create or get the product - Fix: Call the method using $this
-        $product_id = $this->create_tip_product($product_name, $amount, $post_id);
-
-        if (!$product_id) {
-            wp_send_json_error('Failed to create product');
+        if ($product_id <= 0) {
+            wp_send_json_error('Invalid product ID');
             return;
         }
 
-        // Add to cart
+        // Get the product
+        $product = wc_get_product($product_id);
+
+        if (!$product) {
+            wp_send_json_error('Product not found');
+            return;
+        }
+
+        // Get the original product price
+        $original_price = $product->get_price();
+
+        // Calculate the total price (original price + tip)
+        $total_price = $original_price + $amount;
+
+        // Add to cart with custom price
         WC()->cart->add_to_cart($product_id, 1, 0, array(), array(
+            'custom_price' => $total_price,
+            'original_price' => $original_price,
             'tip_amount' => $amount,
             'post_id' => $post_id,
             'page_title' => $page_title
@@ -126,29 +139,38 @@ class TippingCartIntegration {
     public function process_tip_order($order_id, $posted_data, $order) {
         global $wpdb;
 
-        foreach ($order->get_items() as $item) {
-            $tip_data = $item->get_meta('tip_data');
-            
-            if ($tip_data) {
-                $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+        // Get order items
+        $order = wc_get_order($order_id);
+
+        foreach ($order->get_items() as $item_id => $item) {
+            // Check if this item has a tip
+            $tip_amount = $item->get_meta('_tip_amount', true);
+
+            if ($tip_amount > 0) {
+                $product_id = $item->get_product_id();
+
+                // Get the post ID if it was stored
+                $post_id = $item->get_meta('post_id', true);
+                if (!$post_id) {
+                    $post_id = $product_id; // Fallback to product ID
+                }
+
+                // Get customer info
                 $customer_id = $order->get_customer_id();
+                $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
 
-                // Get the song files from JetEngine custom fields
-                $song_mp3 = jet_engine()->meta_boxes->get_meta($tip_data['post_id'], 'song_mp3');
-                $song_wav = jet_engine()->meta_boxes->get_meta($tip_data['post_id'], 'song_wav');
-
+                // Insert into tips table
+                $table_name = $wpdb->prefix . 'song_tips';
                 $wpdb->insert(
-                    $wpdb->prefix . 'song_tips',
-                    [
-                        'song_id' => $tip_data['post_id'],
-                        'tip_amount' => $tip_data['amount'],
+                    $table_name,
+                    array(
+                        'song_id' => $post_id,
+                        'tip_amount' => $tip_amount,
                         'customer_name' => $customer_name,
                         'customer_id' => $customer_id,
                         'order_id' => $order_id,
-                        'song_mp3' => $song_mp3,
-                        'song_wav' => $song_wav
-                    ],
-                    ['%d', '%f', '%s', '%d', '%d', '%s', '%s']
+                        'created_at' => current_time('mysql')
+                    )
                 );
             }
         }

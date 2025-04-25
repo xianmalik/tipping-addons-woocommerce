@@ -81,16 +81,23 @@ add_action('woocommerce_cancelled_order', function ($order_id) {
   }
 });
 
-// Add filter to modify the product title in cart
+// Add filter to modify the product title in cart to show tip amount
 add_filter('woocommerce_cart_item_name', function ($name, $cart_item, $cart_item_key) {
-  if (isset($cart_item['post_title'])) {
-    return sprintf(
-      __('Tip for: %s', 'tipping-addons-jetengine'),
-      $cart_item['post_title']
-    );
-  }
-  return $name;
+    if (isset($cart_item['tip_amount']) && $cart_item['tip_amount'] > 0) {
+        return $name . ' <span class="tip-amount-display">(' . 
+               sprintf(__('Includes $%s tip', 'tipping-addons-jetengine'), 
+               number_format($cart_item['tip_amount'], 2)) . ')</span>';
+    }
+    return $name;
 }, 10, 3);
+
+// Add the tip amount as order item meta
+add_action('woocommerce_checkout_create_order_line_item', function($item, $cart_item_key, $values, $order) {
+    if (isset($values['tip_amount']) && $values['tip_amount'] > 0) {
+        $item->add_meta_data(__('Tip Amount', 'tipping-addons-jetengine'), wc_price($values['tip_amount']));
+        $item->add_meta_data('_tip_amount', $values['tip_amount'], true); // Hidden meta for processing
+    }
+}, 10, 4);
 
 // Add filter for checkout page product title
 add_filter('woocommerce_order_item_name', function ($name, $item) {
