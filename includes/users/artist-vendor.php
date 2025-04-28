@@ -24,6 +24,7 @@ class ArtistVendor
         add_action('woocommerce_account_manage-products_endpoint', [$this, 'manage_products_content']);
         add_action('woocommerce_account_add-product_endpoint', [$this, 'add_product_content']);
         add_action('woocommerce_account_edit-product_endpoint', [$this, 'edit_product_content']);
+        add_action('woocommerce_account_artist-profile_endpoint', [$this, 'artist_profile_content']);
 
         // Process product submission
         add_action('wp_ajax_submit_artist_product', [$this, 'process_product_submission']);
@@ -43,6 +44,9 @@ class ArtistVendor
 
         // Add signup prompt to login form
         add_action('woocommerce_login_form_start', [$this, 'add_signup_prompt_to_login']);
+
+        
+        add_action('wp_ajax_update_artist_profile', [$this, 'process_profile_update']);
     }
 
     public function add_uploads_to_allowed_paths($path)
@@ -119,12 +123,12 @@ class ArtistVendor
         }
     }
 
-    public function add_endpoints()
-    {
+    public function add_endpoints() {
         add_rewrite_endpoint('artist-sales', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('manage-products', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('add-product', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('edit-product', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('artist-profile', EP_ROOT | EP_PAGES);
 
         // Flush rewrite rules only once
         if (!get_option('artist_vendor_flush_rewrite_rules')) {
@@ -134,7 +138,6 @@ class ArtistVendor
     }
 
     public function add_artist_menu_items($items) {
-        // Show menu items to all logged-in users
         if (is_user_logged_in()) {
             $new_items = [];
             
@@ -142,6 +145,7 @@ class ArtistVendor
                 $new_items[$key] = $item;
                 
                 if ($key === 'dashboard') {
+                    $new_items['artist-profile'] = __('Artist Profile', 'tipping-addons-jetengine');
                     $new_items['artist-sales'] = __('My Tips', 'tipping-addons-jetengine');
                     $new_items['manage-products'] = __('Manage Songs', 'tipping-addons-jetengine');
                 }
@@ -965,6 +969,182 @@ class ArtistVendor
             <a href="<?php echo esc_url(site_url('/artist-registration/')); ?>"><?php _e('Sign up', 'tipping-addons-jetengine'); ?></a>
         </p>
         <?php
+    }
+
+    public function artist_profile_content() {
+        if (!is_user_logged_in()) {
+            return;
+        }
+
+        $user_id = get_current_user_id();
+        $user = get_userdata($user_id);
+        
+        // Get existing meta
+        $artist_bio = get_user_meta($user_id, 'artist_bio', true);
+        $profile_image_id = get_user_meta($user_id, 'profile_image_id', true);
+        $first_name = get_user_meta($user_id, 'first_name', true);
+        $last_name = get_user_meta($user_id, 'last_name', true);
+        $display_name = $user->display_name;
+        ?>
+        
+        <div class="artist-profile-wrapper">
+            <h2><?php _e('Artist Profile Settings', 'tipping-addons-jetengine'); ?></h2>
+            
+            <form id="artist-profile-form" method="post" enctype="multipart/form-data">
+                <div class="form-message"></div>
+
+                <div class="profile-image-section">
+                    <label><?php _e('Profile Picture', 'tipping-addons-jetengine'); ?></label>
+                    <div class="current-profile-image">
+                        <?php if ($profile_image_id) : 
+                            echo wp_get_attachment_image($profile_image_id, 'thumbnail');
+                        else : ?>
+                            <div class="profile-placeholder">
+                                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <input type="file" name="profile_image" id="profile_image" accept="image/*" />
+                    <small><?php _e('Recommended size: 300x300 pixels', 'tipping-addons-jetengine'); ?></small>
+                </div>
+
+                <p>
+                    <label for="first_name"><?php _e('First Name', 'tipping-addons-jetengine'); ?></label>
+                    <input type="text" 
+                           name="first_name" 
+                           id="first_name" 
+                           value="<?php echo esc_attr($first_name); ?>" 
+                           placeholder="<?php _e('Enter your first name', 'tipping-addons-jetengine'); ?>"
+                    />
+                </p>
+
+                <p>
+                    <label for="last_name"><?php _e('Last Name', 'tipping-addons-jetengine'); ?></label>
+                    <input type="text" 
+                           name="last_name" 
+                           id="last_name" 
+                           value="<?php echo esc_attr($last_name); ?>" 
+                           placeholder="<?php _e('Enter your last name', 'tipping-addons-jetengine'); ?>"
+                    />
+                </p>
+
+                <p>
+                    <label for="display_name"><?php _e('Display Name', 'tipping-addons-jetengine'); ?></label>
+                    <input type="text" 
+                           name="display_name" 
+                           id="display_name" 
+                           value="<?php echo esc_attr($display_name); ?>" 
+                           readonly
+                           disabled
+                    />
+                    <small><?php _e('This is how your name will appear publicly', 'tipping-addons-jetengine'); ?></small>
+                </p>
+
+                <p>
+                    <label for="artist_bio"><?php _e('Bio', 'tipping-addons-jetengine'); ?></label>
+                    <textarea name="artist_bio" 
+                              id="artist_bio" 
+                              rows="5" 
+                              placeholder="<?php _e('Tell your fans about yourself', 'tipping-addons-jetengine'); ?>"
+                    ><?php echo esc_textarea($artist_bio); ?></textarea>
+                    <small><?php _e('Write a short bio to introduce yourself to your fans', 'tipping-addons-jetengine'); ?></small>
+                </p>
+
+                <p>
+                    <input type="hidden" name="action" value="update_artist_profile" />
+                    <input type="hidden" name="profile_nonce" value="<?php echo wp_create_nonce('update_artist_profile_nonce'); ?>" />
+                    <button type="submit" class="button"><?php _e('Save Changes', 'tipping-addons-jetengine'); ?></button>
+                </p>
+            </form>
+
+            <script>
+            jQuery(document).ready(function($) {
+                $('#artist-profile-form').on('submit', function(e) {
+                    e.preventDefault();
+                    
+                    var formData = new FormData(this);
+                    
+                    $.ajax({
+                        url: artist_vendor_params.ajax_url,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            if (response.success) {
+                                $('.form-message').removeClass('error').addClass('success').html(response.data.message);
+                                if (response.data.reload) {
+                                    setTimeout(function() {
+                                        window.location.reload();
+                                    }, 1000);
+                                }
+                            } else {
+                                $('.form-message').removeClass('success').addClass('error').html(response.data.message);
+                            }
+                        }
+                    });
+                });
+            });
+            </script>
+        </div>
+        <?php
+    }
+
+    public function process_profile_update() {
+        // Verify nonce and check if user is logged in
+        if (!isset($_POST['profile_nonce']) || 
+            !wp_verify_nonce($_POST['profile_nonce'], 'update_artist_profile_nonce') || 
+            !is_user_logged_in()) {
+            wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+        }
+
+        $user_id = get_current_user_id();
+
+        // Update basic user data
+        $userdata = array(
+            'ID'           => $user_id,
+            'first_name'   => sanitize_text_field($_POST['first_name']),
+            'last_name'    => sanitize_text_field($_POST['last_name']),
+            'display_name' => sanitize_text_field($_POST['first_name'] . ' ' . $_POST['last_name'])
+        );
+
+        $user_id = wp_update_user($userdata);
+
+        if (is_wp_error($user_id)) {
+            wp_send_json_error(['message' => $user_id->get_error_message()]);
+        }
+
+        // Update artist bio
+        update_user_meta($user_id, 'artist_bio', wp_kses_post($_POST['artist_bio']));
+
+        // Handle profile image upload
+        if (!empty($_FILES['profile_image']['name'])) {
+            // If there's an existing profile image, delete it
+            $old_image_id = get_user_meta($user_id, 'profile_image_id', true);
+            if ($old_image_id) {
+                wp_delete_attachment($old_image_id, true);
+            }
+
+            // Upload new image
+            $profile_image_id = media_handle_upload('profile_image', 0);
+            if (is_wp_error($profile_image_id)) {
+                wp_send_json_error(['message' => $profile_image_id->get_error_message()]);
+            } else {
+                update_user_meta($user_id, 'profile_image_id', $profile_image_id);
+            }
+        }
+
+        // Also update these fields in user meta for compatibility
+        update_user_meta($user_id, 'first_name', sanitize_text_field($_POST['first_name']));
+        update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
+
+        wp_send_json_success([
+            'message' => __('Profile updated successfully!', 'tipping-addons-jetengine'),
+            'reload' => true
+        ]);
     }
 }
 
