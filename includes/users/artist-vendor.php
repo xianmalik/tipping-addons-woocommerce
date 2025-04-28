@@ -499,7 +499,6 @@ class ArtistVendor
         if (!is_user_logged_in()) {
             return;
         }
-
         ?>
         <h2><?php _e('Add New Music Product', 'tipping-addons-jetengine'); ?></h2>
 
@@ -507,7 +506,7 @@ class ArtistVendor
             <div class="form-message"></div>
 
             <p>
-                <label for="product_name"><?php _e('Product Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                <label for="product_name"><?php _e('Song Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                 <input type="text" name="product_name" id="product_name" required />
             </p>
 
@@ -517,23 +516,26 @@ class ArtistVendor
             </p>
 
             <p>
-                <label for="product_price"><?php _e('Price ($)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <input type="number" name="product_price" id="product_price" step="0.01" min="0" required />
+                <label for="product_image"><?php _e('Song Cover', 'tipping-addons-jetengine'); ?></label>
+                <input type="file" name="product_image" id="product_image" accept="image/*" />
             </p>
 
             <p>
-                <label for="product_image"><?php _e('Product Image', 'tipping-addons-jetengine'); ?></label>
-                <input type="file" name="product_image" id="product_image" accept="image/*" />
+                <label for="product_preview"><?php _e('Music Preview', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                <input type="file" name="product_preview" id="product_preview" accept="audio/*" required />
+                <small><?php _e('Upload a preview version of your song', 'tipping-addons-jetengine'); ?></small>
             </p>
 
             <p>
                 <label for="product_mp3"><?php _e('MP3 File', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                 <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" required />
+                <small><?php _e('Upload the full version of your song in MP3 format', 'tipping-addons-jetengine'); ?></small>
             </p>
 
             <p>
                 <label for="product_wav"><?php _e('WAV File (Optional)', 'tipping-addons-jetengine'); ?></label>
                 <input type="file" name="product_wav" id="product_wav" accept=".wav" />
+                <small><?php _e('Upload a high-quality WAV version of your song (optional)', 'tipping-addons-jetengine'); ?></small>
             </p>
 
             <p>
@@ -566,71 +568,77 @@ class ArtistVendor
         }
 
         // Get existing file attachments
+        $song_preview = get_post_meta($product_id, 'song_preview', true);
         $song_mp3 = get_post_meta($product_id, 'song_mp3', true);
         $song_wav = get_post_meta($product_id, 'song_wav', true);
+?>
+    <h2><?php _e('Edit Music Product', 'tipping-addons-jetengine'); ?></h2>
 
-    ?>
-        <h2><?php _e('Edit Music Product', 'tipping-addons-jetengine'); ?></h2>
+    <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
+        <div class="form-message"></div>
 
-        <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
-            <div class="form-message"></div>
+        <p>
+            <label for="product_name"><?php _e('Song Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+            <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
+        </p>
 
-            <p>
-                <label for="product_name"><?php _e('Product Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
-            </p>
+        <p>
+            <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+            <textarea name="product_description" id="product_description" rows="5" required><?php echo esc_textarea($product->get_description()); ?></textarea>
+        </p>
 
-            <p>
-                <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <textarea name="product_description" id="product_description" rows="5" required><?php echo esc_textarea($product->get_description()); ?></textarea>
-            </p>
+        <p>
+            <label for="product_image"><?php _e('Song Cover', 'tipping-addons-jetengine'); ?></label>
+            <?php if ($product->get_image_id()) : ?>
+                <div class="current-image">
+                    <?php echo $product->get_image('thumbnail'); ?>
+                    <span><?php _e('Current image', 'tipping-addons-jetengine'); ?></span>
+                </div>
+            <?php endif; ?>
+            <input type="file" name="product_image" id="product_image" accept="image/*" />
+            <small><?php _e('Leave empty to keep current image', 'tipping-addons-jetengine'); ?></small>
+        </p>
 
-            <p>
-                <label for="product_price"><?php _e('Price ($)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <input type="number" name="product_price" id="product_price" step="0.01" min="0" value="<?php echo esc_attr($product->get_regular_price()); ?>" required />
-            </p>
-
-            <p>
-                <label for="product_image"><?php _e('Product Image', 'tipping-addons-jetengine'); ?></label>
-                <?php if ($product->get_image_id()) : ?>
-            <div class="current-image">
-                <?php echo $product->get_image('thumbnail'); ?>
-                <span><?php _e('Current image', 'tipping-addons-jetengine'); ?></span>
-            </div>
-        <?php endif; ?>
-        <input type="file" name="product_image" id="product_image" accept="image/*" />
-        <small><?php _e('Leave empty to keep current image', 'tipping-addons-jetengine'); ?></small>
+        <p>
+            <label for="product_preview"><?php _e('Music Preview', 'tipping-addons-jetengine'); ?></label>
+            <?php if ($song_preview) : ?>
+                <div class="current-file">
+                    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_preview)); ?></span>
+                </div>
+            <?php endif; ?>
+            <input type="file" name="product_preview" id="product_preview" accept="audio/*" />
+            <small><?php _e('Upload a 30-second preview version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
         </p>
 
         <p>
             <label for="product_mp3"><?php _e('MP3 File', 'tipping-addons-jetengine'); ?></label>
             <?php if ($song_mp3) : ?>
-        <div class="current-file">
-            <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_mp3)); ?></span>
-        </div>
-    <?php endif; ?>
-    <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" />
-    <small><?php _e('Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-    </p>
+                <div class="current-file">
+                    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_mp3)); ?></span>
+                </div>
+            <?php endif; ?>
+            <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" />
+            <small><?php _e('Upload the full version of your song in MP3 format. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
+        </p>
 
-    <p>
-        <label for="product_wav"><?php _e('WAV File', 'tipping-addons-jetengine'); ?></label>
-        <?php if ($song_wav) : ?>
-    <div class="current-file">
-        <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_wav)); ?></span>
-    </div>
-<?php endif; ?>
-<input type="file" name="product_wav" id="product_wav" accept=".wav" />
-<small><?php _e('Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-</p>
+        <p>
+            <label for="product_wav"><?php _e('WAV File', 'tipping-addons-jetengine'); ?></label>
+            <?php if ($song_wav) : ?>
+                <div class="current-file">
+                    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_wav)); ?></span>
+                </div>
+            <?php endif; ?>
+            <input type="file" name="product_wav" id="product_wav" accept=".wav" />
+            <small><?php _e('Upload a high-quality WAV version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
+        </p>
 
-<p>
-    <input type="hidden" name="action" value="update_artist_product" />
-    <input type="hidden" name="product_id" value="<?php echo esc_attr($product_id); ?>" />
-    <input type="hidden" name="product_nonce" value="<?php echo wp_create_nonce('update_artist_product_nonce'); ?>" />
-    <button type="submit" class="button"><?php _e('Update Product', 'tipping-addons-jetengine'); ?></button>
-</p>
-        </form>
+        <p>
+            <input type="hidden" name="action" value="update_artist_product" />
+            <input type="hidden" name="product_id" value="<?php echo esc_attr($product_id); ?>" />
+            <input type="hidden" name="product_nonce" value="<?php echo wp_create_nonce('update_artist_product_nonce'); ?>" />
+            <button type="submit" class="button"><?php _e('Update Product', 'tipping-addons-jetengine'); ?></button>
+        </p>
+    </form>
 <?php
     }
 
@@ -645,22 +653,15 @@ class ArtistVendor
         // Validate required fields
         $name = sanitize_text_field($_POST['product_name']);
         $description = wp_kses_post($_POST['product_description']);
-        $price = floatval($_POST['product_price']);
 
-        if (empty($name) || empty($description) || $price <= 0) {
+        if (empty($name) || empty($description)) {
             wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'tipping-addons-jetengine')]);
-        }
-
-        // Check for MP3 file
-        if (empty($_FILES['product_mp3']['name'])) {
-            wp_send_json_error(['message' => __('MP3 file is required', 'tipping-addons-jetengine')]);
         }
 
         // Create product
         $product = new WC_Product_Simple();
         $product->set_name($name);
         $product->set_description($description);
-        $product->set_regular_price($price);
         $product->set_status('pending');
         $product->set_catalog_visibility('visible');
         $product->set_downloadable(true);
@@ -757,25 +758,29 @@ class ArtistVendor
             wp_send_json_error(['message' => __('You do not have permission to edit this product', 'tipping-addons-jetengine')]);
         }
 
-        // Update product data
+        // Update basic product data
         $name = sanitize_text_field($_POST['product_name']);
         $description = wp_kses_post($_POST['product_description']);
-        $price = floatval($_POST['product_price']);
 
-        if (empty($name) || empty($description) || $price <= 0) {
+        if (empty($name) || empty($description)) {
             wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'tipping-addons-jetengine')]);
         }
 
         $product->set_name($name);
         $product->set_description($description);
-        $product->set_regular_price($price);
         $product->set_status('pending'); // Set to pending for admin review
 
         // Get existing downloads
         $downloads = $product->get_downloads();
 
-        // Add WooCommerce download directory to approved list
-        add_filter('woocommerce_downloadable_file_allowed_paths', [$this, 'allow_uploads_directory'], 999);
+        // Handle Music Preview update
+        if (!empty($_FILES['product_preview']['name'])) {
+            $preview_id = $this->upload_product_file('product_preview', $product_id);
+            if (is_wp_error($preview_id)) {
+                wp_send_json_error(['message' => $preview_id->get_error_message()]);
+            }
+            update_post_meta($product_id, 'song_preview', $preview_id);
+        }
 
         // Handle MP3 file update
         if (!empty($_FILES['product_mp3']['name'])) {
@@ -783,18 +788,13 @@ class ArtistVendor
             if (is_wp_error($mp3_id)) {
                 wp_send_json_error(['message' => $mp3_id->get_error_message()]);
             }
-
-            // Update product meta
             update_post_meta($product_id, 'song_mp3', $mp3_id);
-
-            // Add to downloadable files
-            $mp3_file = get_attached_file($mp3_id);
+            
             $mp3_url = wp_get_attachment_url($mp3_id);
             $downloads[md5($mp3_url)] = [
                 'id' => md5($mp3_url),
                 'name' => 'MP3 Version',
-                'file' => $this->get_relative_upload_path($mp3_file),
-                'previous_hash' => ''
+                'file' => $mp3_url
             ];
         }
 
@@ -804,23 +804,20 @@ class ArtistVendor
             if (is_wp_error($wav_id)) {
                 wp_send_json_error(['message' => $wav_id->get_error_message()]);
             }
-
-            // Update product meta
             update_post_meta($product_id, 'song_wav', $wav_id);
-
-            // Add to downloadable files
-            $wav_file = get_attached_file($wav_id);
+            
             $wav_url = wp_get_attachment_url($wav_id);
             $downloads[md5($wav_url)] = [
                 'id' => md5($wav_url),
                 'name' => 'WAV Version',
-                'file' => $this->get_relative_upload_path($wav_file),
-                'previous_hash' => ''
+                'file' => $wav_url
             ];
         }
 
         // Update downloadable files
-        $product->set_downloads($downloads);
+        if (!empty($downloads)) {
+            $product->set_downloads($downloads);
+        }
 
         // Handle product image update
         if (!empty($_FILES['product_image']['name'])) {
@@ -830,7 +827,7 @@ class ArtistVendor
             }
         }
 
-        // Save product with all the updates
+        // Save all changes
         $product->save();
 
         wp_send_json_success([
