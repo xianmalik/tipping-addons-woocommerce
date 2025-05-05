@@ -882,6 +882,31 @@
     margin-left: 4px;
 }
 
+.tips-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 6px;
+}
+
+.total-tips {
+    margin-bottom: 0 !important;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.withdraw-money-btn {
+    background-color: #2271b1 !important;
+    color: #fff !important;
+}
+
+.withdraw-money-btn:hover {
+    background-color: #135e96 !important;
+}
+
 .status-completed {
     background-color: #e8f5e9;
     color: #2e7d32;

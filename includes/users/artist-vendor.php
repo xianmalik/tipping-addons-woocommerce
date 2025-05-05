@@ -379,7 +379,7 @@ class ArtistVendor
             'return' => 'ids',
         ]);
 
-        $sales_data = [];
+        $tips_data = [];
         $total_sales = 0;
 
         foreach ($orders as $order_id) {
@@ -391,43 +391,44 @@ class ArtistVendor
                 if (in_array($product_id, $product_ids)) {
                     $product = wc_get_product($product_id);
 
-                    if (!isset($sales_data[$product_id])) {
-                        $sales_data[$product_id] = [
+                    if (!isset($tips_data[$product_id])) {
+                        $tips_data[$product_id] = [
                             'name' => $product->get_name(),
                             'quantity' => 0,
                             'total' => 0
                         ];
                     }
 
-                    $sales_data[$product_id]['quantity'] += $item->get_quantity();
-                    $sales_data[$product_id]['total'] += $item->get_total();
+                    $tips_data[$product_id]['quantity'] += $item->get_quantity();
+                    $tips_data[$product_id]['total'] += $item->get_total();
                     $total_sales += $item->get_total();
                 }
             }
         }
 
         ?>
-        <div class="sales-management-header">
-            <h2><?php _e('My Tips', 'tipping-addons-jetengine'); ?></h2>
+        <div class="tips-summary">
+            <p class="total-tips"><?php printf(__('Total Tips: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
+            <button type="button" class="withdraw-money-btn button">
+                <?php _e('Withdraw Money', 'tipping-addons-jetengine'); ?>
+            </button>
         </div>
-
-        <p><?php printf(__('Total Sales: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
         
         <div class="sales-list">
             <?php
-                if (!empty($sales_data)) {
-                    foreach ($sales_data as $product_id => $sale): ?>
+                if (!empty($tips_data)) {
+                    foreach ($tips_data as $product_id => $tip): ?>
                     <div class="sale-item">
                         <div class="sale-details">
                             <div class="sale-main">
-                                <!-- <?php echo var_dump($sale); ?> -->
-                                <h3><?php echo esc_html($sale['name']); ?></h3>
-                                <span class="sale-date"><?php echo date('j M Y', strtotime($sale->date_created)); ?></span>
+                                <!-- <?php echo var_dump($tip); ?> -->
+                                <h3><?php echo esc_html($tip['name']); ?></h3>
+                                <span class="sale-date"><?php echo date('j M Y', strtotime($tip->date_created)); ?></span>
                             </div>
                             <div class="sale-meta">
                                 <span class="sale-amount">
-                                    <?php echo number_format($sale['total'], 2); ?>
-                                    <span class="sale-currency">BDT</span>
+                                    <span class="sale-currency"><?php echo get_woocommerce_currency_symbol(); ?></span>
+                                    <?php echo number_format($tip['total'], 2); ?>
                                 </span>
                             </div>
                         </div>
