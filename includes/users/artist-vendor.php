@@ -6,7 +6,8 @@ if (!defined('ABSPATH')) {
 class ArtistVendor
 {
     // Add this to your ArtistVendor class constructor
-    public function __construct() {
+    public function __construct()
+    {
         // Create custom role on plugin activation
         register_activation_hook(plugin_dir_path(dirname(dirname(__FILE__))) . 'tipping-addons-jetengine.php', [$this, 'create_artist_role']);
 
@@ -24,6 +25,11 @@ class ArtistVendor
         add_action('woocommerce_account_manage-products_endpoint', [$this, 'manage_products_content']);
         add_action('woocommerce_account_add-product_endpoint', [$this, 'add_product_content']);
         add_action('woocommerce_account_edit-product_endpoint', [$this, 'edit_product_content']);
+
+        // Import and use delete product functionality
+        require_once plugin_dir_path(__FILE__) . 'songs/delete.php';
+        $delete_handler = new DeleteProductHandler();
+        add_action('woocommerce_account_delete-product_endpoint', [$delete_handler, 'handle_delete']);
         add_action('woocommerce_account_artist-profile_endpoint', [$this, 'artist_profile_content']);
 
         // Process product submission
@@ -45,7 +51,7 @@ class ArtistVendor
         // Add signup prompt to login form
         add_action('woocommerce_login_form_start', [$this, 'add_signup_prompt_to_login']);
 
-        
+
         add_action('wp_ajax_update_artist_profile', [$this, 'process_profile_update']);
     }
 
@@ -123,11 +129,13 @@ class ArtistVendor
         }
     }
 
-    public function add_endpoints() {
+    public function add_endpoints()
+    {
         add_rewrite_endpoint('artist-sales', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('manage-products', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('add-product', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('edit-product', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('delete-product', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('artist-profile', EP_ROOT | EP_PAGES);
 
         // Flush rewrite rules only once
@@ -137,29 +145,31 @@ class ArtistVendor
         }
     }
 
-    public function add_artist_menu_items($items) {
+    public function add_artist_menu_items($items)
+    {
         if (is_user_logged_in()) {
             $new_items = [];
-            
+
             foreach ($items as $key => $item) {
                 $new_items[$key] = $item;
-                
+
                 if ($key === 'dashboard') {
                     $new_items['artist-profile'] = __('Artist Profile', 'tipping-addons-jetengine');
                     $new_items['artist-sales'] = __('My Tips', 'tipping-addons-jetengine');
                     $new_items['manage-products'] = __('Manage Songs', 'tipping-addons-jetengine');
                 }
             }
-            
+
             return $new_items;
         }
         return $items;
     }
 
-    public function check_user_logged_in() {
+    public function check_user_logged_in()
+    {
         global $wp_query;
 
-        $endpoints = ['artist-sales', 'manage-products', 'add-product', 'edit-product'];
+        $endpoints = ['artist-sales', 'manage-products', 'add-product', 'edit-product', 'delete-product'];
 
         foreach ($endpoints as $endpoint) {
             if (isset($wp_query->query_vars[$endpoint]) && !is_user_logged_in()) {
@@ -169,7 +179,8 @@ class ArtistVendor
         }
     }
 
-    public function registration_form_shortcode() {
+    public function registration_form_shortcode()
+    {
         ob_start();
 
         // If user is logged in, show a message
@@ -192,7 +203,7 @@ class ArtistVendor
             <h2><?php _e('Register as Music Artist', 'tipping-addons-jetengine'); ?></h2>
 
             <div class="registration-message"></div>
-            
+
             <form id="artist-registration-form" method="post">
                 <p>
                     <label for="artist_username"><?php _e('Username', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
@@ -348,7 +359,8 @@ class ArtistVendor
         ]);
     }
 
-    public function artist_sales_content() {
+    public function artist_sales_content()
+    {
         if (!is_user_logged_in()) {
             return;
         }
@@ -367,7 +379,7 @@ class ArtistVendor
         $product_ids = wp_list_pluck($products, 'ID');
 
         if (empty($product_ids)) {
-            echo '<p>' . __('You haven\'t created any products yet.', 'tipping-addons-jetengine') . '</p>';
+            echo '<p>' . __('You haven\'t created any songs yet.', 'tipping-addons-jetengine') . '</p>';
             echo '<p><a href="' . wc_get_account_endpoint_url('add-product') . '" class="button">' . __('Add Your First Product', 'tipping-addons-jetengine') . '</a></p>';
             return;
         }
@@ -406,18 +418,18 @@ class ArtistVendor
             }
         }
 
-        ?>
+    ?>
         <div class="tips-summary">
             <p class="total-tips"><?php printf(__('Total Tips: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
             <button type="button" class="withdraw-money-btn button">
                 <?php _e('Withdraw Money', 'tipping-addons-jetengine'); ?>
             </button>
         </div>
-        
+
         <div class="sales-list">
             <?php
-                if (!empty($tips_data)) {
-                    foreach ($tips_data as $product_id => $tip): ?>
+            if (!empty($tips_data)) {
+                foreach ($tips_data as $product_id => $tip): ?>
                     <div class="sale-item">
                         <div class="sale-details">
                             <div class="sale-main">
@@ -434,19 +446,22 @@ class ArtistVendor
                         </div>
                     </div>
                 <?php endforeach;
-                } else { ?>
+            } else { ?>
                 <p><?php _e('No sales data available yet.', 'tipping-addons-jetengine'); ?></p>
             <?php } ?>
         </div>
-        <?php
+    <?php
     }
 
-    public function manage_products_content() {
+    public function manage_products_content()
+    {
         if (!is_user_logged_in()) {
             return;
         }
 
         $user_id = get_current_user_id();
+        $song_count = $this->get_artist_song_count($user_id);
+        $max_songs = 5;
 
         // Get products created by this artist
         $args = [
@@ -458,10 +473,18 @@ class ArtistVendor
 
         $products = get_posts($args);
 
-        ?>
+    ?>
         <div class="product-management-header">
             <h2><?php _e('Products', 'tipping-addons-jetengine'); ?></h2>
-            <a href="<?php echo wc_get_account_endpoint_url('add-product'); ?>" class="see-all"><?php _e('Add New', 'tipping-addons-jetengine'); ?></a>
+            <?php if ($song_count < $max_songs) : ?>
+                <a href="<?php echo wc_get_account_endpoint_url('add-product'); ?>" class="see-all">
+                    <?php _e('Add New', 'tipping-addons-jetengine'); ?>
+                </a>
+            <?php endif; ?>
+        </div>
+
+        <div class="song-limit-info">
+            <p><?php printf(__('Songs: %d of %d used', 'tipping-addons-jetengine'), $song_count, $max_songs); ?></p>
         </div>
 
         <?php if (!empty($products)) : ?>
@@ -486,9 +509,22 @@ class ArtistVendor
                                 <span class="product-price">
                                     <?php echo $wc_product->get_price_html(); ?>
                                 </span>
-                                <a href="<?php echo add_query_arg('product_id', $product->ID, wc_get_account_endpoint_url('edit-product')); ?>" 
-                                   class="edit-button">
+                                <a href="<?php echo add_query_arg('product_id', $product->ID, wc_get_account_endpoint_url('edit-product')); ?>"
+                                    class="edit-button">
                                     <?php _e('Edit', 'tipping-addons-jetengine'); ?>
+                                </a>
+                                <a href="<?php
+                                            echo wp_nonce_url(
+                                                add_query_arg(
+                                                    array(
+                                                        'product_id' => $product->ID
+                                                    ),
+                                                    wc_get_account_endpoint_url('delete-product')
+                                                ),
+                                                'delete_artist_product_' . $product->ID
+                                            ); ?>"
+                                    class="delete-button">
+                                    <?php _e('Delete', 'tipping-addons-jetengine'); ?>
                                 </a>
                             </div>
                         </div>
@@ -496,14 +532,32 @@ class ArtistVendor
                 <?php endforeach; ?>
             </div>
         <?php else : ?>
-            <p><?php _e('You haven\'t created any products yet.', 'tipping-addons-jetengine'); ?></p>
+            <p><?php _e('You haven\'t created any songs yet.', 'tipping-addons-jetengine'); ?></p>
         <?php endif;
     }
 
-    public function add_product_content() {
+    public function add_product_content()
+    {
         if (!is_user_logged_in()) {
             return;
         }
+
+        $user_id = get_current_user_id();
+        $song_count = $this->get_artist_song_count($user_id);
+        $max_songs = 5;
+
+        if ($song_count >= $max_songs) {
+        ?>
+            <div class="song-limit-reached">
+                <p><?php _e('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine'); ?></p>
+                <a href="<?php echo wc_get_account_endpoint_url('manage-products'); ?>" class="button">
+                    <?php _e('Manage Existing Songs', 'tipping-addons-jetengine'); ?>
+                </a>
+            </div>
+        <?php
+            return;
+        }
+
         ?>
         <h2><?php _e('Add New Music Product', 'tipping-addons-jetengine'); ?></h2>
 
@@ -528,7 +582,7 @@ class ArtistVendor
             <p>
                 <label for="product_preview"><?php _e('Music Preview', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                 <input type="file" name="product_preview" id="product_preview" accept="audio/*" required />
-                <small><?php _e('Upload a preview version of your song', 'tipping-addons-jetengine'); ?></small>
+                <small><?php _e('Please upload either a portion, or your full song in MP3 format.', 'tipping-addons-jetengine'); ?></small>
             </p>
 
             <p>
@@ -552,7 +606,8 @@ class ArtistVendor
     <?php
     }
 
-    public function edit_product_content() {
+    public function edit_product_content()
+    {
         if (!is_user_logged_in()) {
             return;
         }
@@ -576,83 +631,99 @@ class ArtistVendor
         $song_preview = get_post_meta($product_id, 'song_preview', true);
         $song_mp3 = get_post_meta($product_id, 'song_mp3', true);
         $song_wav = get_post_meta($product_id, 'song_wav', true);
-?>
-    <h2><?php _e('Edit Music Product', 'tipping-addons-jetengine'); ?></h2>
+    ?>
+        <h2><?php _e('Edit Music Product', 'tipping-addons-jetengine'); ?></h2>
 
-    <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
-        <div class="form-message"></div>
+        <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
+            <div class="form-message"></div>
 
-        <p>
-            <label for="product_name"><?php _e('Song Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-            <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
-        </p>
+            <p>
+                <label for="product_name"><?php _e('Song Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
+            </p>
 
-        <p>
-            <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-            <textarea name="product_description" id="product_description" rows="5" required><?php echo esc_textarea($product->get_description()); ?></textarea>
-        </p>
+            <p>
+                <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                <textarea name="product_description" id="product_description" rows="5" required><?php echo esc_textarea($product->get_description()); ?></textarea>
+            </p>
 
-        <p>
-            <label for="product_image"><?php _e('Song Cover', 'tipping-addons-jetengine'); ?></label>
-            <?php if ($product->get_image_id()) : ?>
-                <div class="current-image">
-                    <?php echo $product->get_image('thumbnail'); ?>
-                    <span><?php _e('Current image', 'tipping-addons-jetengine'); ?></span>
-                </div>
-            <?php endif; ?>
-            <input type="file" name="product_image" id="product_image" accept="image/*" />
-            <small><?php _e('Leave empty to keep current image', 'tipping-addons-jetengine'); ?></small>
+            <p>
+                <label for="product_image"><?php _e('Song Cover', 'tipping-addons-jetengine'); ?></label>
+                <?php if ($product->get_image_id()) : ?>
+            <div class="current-image">
+                <?php echo $product->get_image('thumbnail'); ?>
+                <span><?php _e('Current image', 'tipping-addons-jetengine'); ?></span>
+            </div>
+        <?php endif; ?>
+        <input type="file" name="product_image" id="product_image" accept="image/*" />
+        <small><?php _e('Leave empty to keep current image', 'tipping-addons-jetengine'); ?></small>
         </p>
 
         <p>
             <label for="product_preview"><?php _e('Music Preview', 'tipping-addons-jetengine'); ?></label>
             <?php if ($song_preview) : ?>
-                <div class="current-file">
-                    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_preview)); ?></span>
-                </div>
-            <?php endif; ?>
-            <input type="file" name="product_preview" id="product_preview" accept="audio/*" />
-            <small><?php _e('Upload a 30-second preview version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-        </p>
+        <div class="current-file">
+            <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_preview)); ?></span>
+        </div>
+    <?php endif; ?>
+    <input type="file" name="product_preview" id="product_preview" accept="audio/*" />
+    <small><?php _e('Upload a 30-second preview version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
+    </p>
 
-        <p>
-            <label for="product_mp3"><?php _e('MP3 File', 'tipping-addons-jetengine'); ?></label>
-            <?php if ($song_mp3) : ?>
-                <div class="current-file">
-                    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_mp3)); ?></span>
-                </div>
-            <?php endif; ?>
-            <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" />
-            <small><?php _e('Upload the full version of your song in MP3 format. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-        </p>
+    <p>
+        <label for="product_mp3"><?php _e('MP3 File', 'tipping-addons-jetengine'); ?></label>
+        <?php if ($song_mp3) : ?>
+    <div class="current-file">
+        <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_mp3)); ?></span>
+    </div>
+<?php endif; ?>
+<input type="file" name="product_mp3" id="product_mp3" accept=".mp3" />
+<small><?php _e('Upload the full version of your song in MP3 format. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
+</p>
 
-        <p>
-            <label for="product_wav"><?php _e('WAV File', 'tipping-addons-jetengine'); ?></label>
-            <?php if ($song_wav) : ?>
-                <div class="current-file">
-                    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_wav)); ?></span>
-                </div>
-            <?php endif; ?>
-            <input type="file" name="product_wav" id="product_wav" accept=".wav" />
-            <small><?php _e('Upload a high-quality WAV version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-        </p>
+<p>
+    <label for="product_wav"><?php _e('WAV File', 'tipping-addons-jetengine'); ?></label>
+    <?php if ($song_wav) : ?>
+<div class="current-file">
+    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_wav)); ?></span>
+</div>
+<?php endif; ?>
+<input type="file" name="product_wav" id="product_wav" accept=".wav" />
+<small><?php _e('Upload a high-quality WAV version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
+</p>
 
-        <p>
-            <input type="hidden" name="action" value="update_artist_product" />
-            <input type="hidden" name="product_id" value="<?php echo esc_attr($product_id); ?>" />
-            <input type="hidden" name="product_nonce" value="<?php echo wp_create_nonce('update_artist_product_nonce'); ?>" />
-            <button type="submit" class="button"><?php _e('Update Product', 'tipping-addons-jetengine'); ?></button>
-        </p>
-    </form>
-<?php
+<p>
+    <input type="hidden" name="action" value="update_artist_product" />
+    <input type="hidden" name="product_id" value="<?php echo esc_attr($product_id); ?>" />
+    <input type="hidden" name="product_nonce" value="<?php echo wp_create_nonce('update_artist_product_nonce'); ?>" />
+    <button type="submit" class="button"><?php _e('Update Song', 'tipping-addons-jetengine'); ?></button>
+</p>
+        </form>
+    <?php
     }
 
-    public function process_product_submission() {
+
+
+    public function process_product_submission()
+    {
         // Verify nonce and check if user is logged in
-        if (!isset($_POST['product_nonce']) || 
-            !wp_verify_nonce($_POST['product_nonce'], 'submit_artist_product_nonce') || 
-            !is_user_logged_in()) {
+        if (
+            !isset($_POST['product_nonce']) ||
+            !wp_verify_nonce($_POST['product_nonce'], 'submit_artist_product_nonce') ||
+            !is_user_logged_in()
+        ) {
             wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+        }
+
+        $user_id = get_current_user_id();
+        $song_count = $this->get_artist_song_count($user_id);
+        $max_songs = 5;
+
+        // Check if artist has reached the song limit
+        if ($song_count >= $max_songs) {
+            wp_send_json_error([
+                'message' => __('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine')
+            ]);
         }
 
         // Validate required fields
@@ -747,11 +818,14 @@ class ArtistVendor
         ]);
     }
 
-    public function process_product_update() {
+    public function process_product_update()
+    {
         // Verify nonce and check if user is logged in
-        if (!isset($_POST['product_nonce']) || 
-            !wp_verify_nonce($_POST['product_nonce'], 'update_artist_product_nonce') || 
-            !is_user_logged_in()) {
+        if (
+            !isset($_POST['product_nonce']) ||
+            !wp_verify_nonce($_POST['product_nonce'], 'update_artist_product_nonce') ||
+            !is_user_logged_in()
+        ) {
             wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
         }
 
@@ -794,7 +868,7 @@ class ArtistVendor
                 wp_send_json_error(['message' => $mp3_id->get_error_message()]);
             }
             update_post_meta($product_id, 'song_mp3', $mp3_id);
-            
+
             $mp3_url = wp_get_attachment_url($mp3_id);
             $downloads[md5($mp3_url)] = [
                 'id' => md5($mp3_url),
@@ -810,7 +884,7 @@ class ArtistVendor
                 wp_send_json_error(['message' => $wav_id->get_error_message()]);
             }
             update_post_meta($product_id, 'song_wav', $wav_id);
-            
+
             $wav_url = wp_get_attachment_url($wav_id);
             $downloads[md5($wav_url)] = [
                 'id' => md5($wav_url),
@@ -945,7 +1019,8 @@ class ArtistVendor
     /**
      * Add product management capabilities to all user roles
      */
-    public function add_product_capabilities_to_users() {
+    public function add_product_capabilities_to_users()
+    {
         $roles = ['subscriber', 'customer', 'contributor', 'author'];
 
         foreach ($roles as $role_name) {
@@ -963,41 +1038,43 @@ class ArtistVendor
         }
     }
 
-    public function add_signup_prompt_to_login() {
-        ?>
+    public function add_signup_prompt_to_login()
+    {
+    ?>
         <p class="signup-prompt">
             <?php _e('New to Musicbae? ', 'tipping-addons-jetengine'); ?>
             <a href="<?php echo esc_url(site_url('/artist-registration/')); ?>"><?php _e('Sign up', 'tipping-addons-jetengine'); ?></a>
         </p>
-        <?php
+    <?php
     }
 
-    public function artist_profile_content() {
+    public function artist_profile_content()
+    {
         if (!is_user_logged_in()) {
             return;
         }
 
         $user_id = get_current_user_id();
         $user = get_userdata($user_id);
-        
+
         // Get existing meta
         $artist_bio = get_user_meta($user_id, 'artist_bio', true);
         $profile_image_id = get_user_meta($user_id, 'profile_image_id', true);
         $first_name = get_user_meta($user_id, 'first_name', true);
         $last_name = get_user_meta($user_id, 'last_name', true);
         $display_name = $user->display_name;
-        ?>
-        
+    ?>
+
         <div class="artist-profile-wrapper">
             <h2><?php _e('Artist Profile Settings', 'tipping-addons-jetengine'); ?></h2>
-            
+
             <form id="artist-profile-form" method="post" enctype="multipart/form-data">
                 <div class="form-message"></div>
 
                 <div class="profile-image-section">
                     <label><?php _e('Profile Picture', 'tipping-addons-jetengine'); ?></label>
                     <div class="current-profile-image">
-                        <?php if ($profile_image_id) : 
+                        <?php if ($profile_image_id) :
                             echo wp_get_attachment_image($profile_image_id, 'thumbnail');
                         else : ?>
                             <div class="profile-placeholder">
@@ -1014,43 +1091,39 @@ class ArtistVendor
 
                 <p>
                     <label for="first_name"><?php _e('First Name', 'tipping-addons-jetengine'); ?></label>
-                    <input type="text" 
-                           name="first_name" 
-                           id="first_name" 
-                           value="<?php echo esc_attr($first_name); ?>" 
-                           placeholder="<?php _e('Enter your first name', 'tipping-addons-jetengine'); ?>"
-                    />
+                    <input type="text"
+                        name="first_name"
+                        id="first_name"
+                        value="<?php echo esc_attr($first_name); ?>"
+                        placeholder="<?php _e('Enter your first name', 'tipping-addons-jetengine'); ?>" />
                 </p>
 
                 <p>
                     <label for="last_name"><?php _e('Last Name', 'tipping-addons-jetengine'); ?></label>
-                    <input type="text" 
-                           name="last_name" 
-                           id="last_name" 
-                           value="<?php echo esc_attr($last_name); ?>" 
-                           placeholder="<?php _e('Enter your last name', 'tipping-addons-jetengine'); ?>"
-                    />
+                    <input type="text"
+                        name="last_name"
+                        id="last_name"
+                        value="<?php echo esc_attr($last_name); ?>"
+                        placeholder="<?php _e('Enter your last name', 'tipping-addons-jetengine'); ?>" />
                 </p>
 
                 <p>
                     <label for="display_name"><?php _e('Display Name', 'tipping-addons-jetengine'); ?></label>
-                    <input type="text" 
-                           name="display_name" 
-                           id="display_name" 
-                           value="<?php echo esc_attr($display_name); ?>" 
-                           readonly
-                           disabled
-                    />
+                    <input type="text"
+                        name="display_name"
+                        id="display_name"
+                        value="<?php echo esc_attr($display_name); ?>"
+                        readonly
+                        disabled />
                     <small><?php _e('This is how your name will appear publicly', 'tipping-addons-jetengine'); ?></small>
                 </p>
 
                 <p>
                     <label for="artist_bio"><?php _e('Bio', 'tipping-addons-jetengine'); ?></label>
-                    <textarea name="artist_bio" 
-                              id="artist_bio" 
-                              rows="5" 
-                              placeholder="<?php _e('Tell your fans about yourself', 'tipping-addons-jetengine'); ?>"
-                    ><?php echo esc_textarea($artist_bio); ?></textarea>
+                    <textarea name="artist_bio"
+                        id="artist_bio"
+                        rows="5"
+                        placeholder="<?php _e('Tell your fans about yourself', 'tipping-addons-jetengine'); ?>"><?php echo esc_textarea($artist_bio); ?></textarea>
                     <small><?php _e('Write a short bio to introduce yourself to your fans', 'tipping-addons-jetengine'); ?></small>
                 </p>
 
@@ -1062,43 +1135,46 @@ class ArtistVendor
             </form>
 
             <script>
-            jQuery(document).ready(function($) {
-                $('#artist-profile-form').on('submit', function(e) {
-                    e.preventDefault();
-                    
-                    var formData = new FormData(this);
-                    
-                    $.ajax({
-                        url: artist_vendor_params.ajax_url,
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function(response) {
-                            if (response.success) {
-                                $('.form-message').removeClass('error').addClass('success').html(response.data.message);
-                                if (response.data.reload) {
-                                    setTimeout(function() {
-                                        window.location.reload();
-                                    }, 1000);
+                jQuery(document).ready(function($) {
+                    $('#artist-profile-form').on('submit', function(e) {
+                        e.preventDefault();
+
+                        var formData = new FormData(this);
+
+                        $.ajax({
+                            url: artist_vendor_params.ajax_url,
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+                                if (response.success) {
+                                    $('.form-message').removeClass('error').addClass('success').html(response.data.message);
+                                    if (response.data.reload) {
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 1000);
+                                    }
+                                } else {
+                                    $('.form-message').removeClass('success').addClass('error').html(response.data.message);
                                 }
-                            } else {
-                                $('.form-message').removeClass('success').addClass('error').html(response.data.message);
                             }
-                        }
+                        });
                     });
                 });
-            });
             </script>
         </div>
-        <?php
+<?php
     }
 
-    public function process_profile_update() {
+    public function process_profile_update()
+    {
         // Verify nonce and check if user is logged in
-        if (!isset($_POST['profile_nonce']) || 
-            !wp_verify_nonce($_POST['profile_nonce'], 'update_artist_profile_nonce') || 
-            !is_user_logged_in()) {
+        if (
+            !isset($_POST['profile_nonce']) ||
+            !wp_verify_nonce($_POST['profile_nonce'], 'update_artist_profile_nonce') ||
+            !is_user_logged_in()
+        ) {
             wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
         }
 
@@ -1146,6 +1222,19 @@ class ArtistVendor
             'message' => __('Profile updated successfully!', 'tipping-addons-jetengine'),
             'reload' => true
         ]);
+    }
+
+    private function get_artist_song_count($user_id)
+    {
+        $args = [
+            'post_type' => 'product',
+            'author' => $user_id,
+            'post_status' => ['publish', 'pending', 'draft'],
+            'posts_per_page' => -1,
+        ];
+
+        $products = get_posts($args);
+        return count($products);
     }
 }
 

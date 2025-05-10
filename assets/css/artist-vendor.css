@@ -256,3 +256,16 @@ form.loading {
 .signup-prompt a:hover {
     text-decoration: underline;
 }
+
+.song-limit-info {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.song-limit-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
