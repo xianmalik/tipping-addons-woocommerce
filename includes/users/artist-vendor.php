@@ -26,9 +26,17 @@ class ArtistVendor
         add_action('woocommerce_account_add-product_endpoint', [$this, 'add_product_content']);
         add_action('woocommerce_account_edit-product_endpoint', [$this, 'edit_product_content']);
 
-        // Import and use delete product functionality
+        // Import and use product management functionality
+        require_once plugin_dir_path(__FILE__) . 'songs/add.php';
+        require_once plugin_dir_path(__FILE__) . 'songs/edit.php';
         require_once plugin_dir_path(__FILE__) . 'songs/delete.php';
+
+        $add_handler = new AddProductHandler();
+        $edit_handler = new EditProductHandler();
         $delete_handler = new DeleteProductHandler();
+
+        add_action('woocommerce_account_add-product_endpoint', [$add_handler, 'handle_add']);
+        add_action('woocommerce_account_edit-product_endpoint', [$edit_handler, 'handle_edit']);
         add_action('woocommerce_account_delete-product_endpoint', [$delete_handler, 'handle_delete']);
         add_action('woocommerce_account_artist-profile_endpoint', [$this, 'artist_profile_content']);
 
@@ -143,6 +151,9 @@ class ArtistVendor
             flush_rewrite_rules();
             update_option('artist_vendor_flush_rewrite_rules', true);
         }
+
+        // Force flush rewrite rules
+        flush_rewrite_rules();
     }
 
     public function add_artist_menu_items($items)
@@ -484,7 +495,7 @@ class ArtistVendor
         </div>
 
         <div class="song-limit-info">
-            <p><?php printf(__('Songs: %d of %d used', 'tipping-addons-jetengine'), $song_count, $max_songs); ?></p>
+            <p><?php printf(__('Songs: %d of %d created', 'tipping-addons-jetengine'), $song_count, $max_songs); ?></p>
         </div>
 
         <?php if (!empty($products)) : ?>

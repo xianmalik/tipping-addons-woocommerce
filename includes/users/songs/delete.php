@@ -3,8 +3,10 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class DeleteProductHandler {
-    public function handle_delete() {
+class DeleteProductHandler
+{
+    public function handle_delete()
+    {
         if (!is_user_logged_in()) {
             return;
         }
@@ -56,16 +58,17 @@ class DeleteProductHandler {
         $this->render_delete_confirmation($product);
     }
 
-    private function render_delete_confirmation($product) {
-        ?>
+    private function render_delete_confirmation($product)
+    {
+?>
         <div class="delete-product-confirmation">
             <h2><?php _e('Delete Song', 'tipping-addons-jetengine'); ?></h2>
-            
+
             <div class="product-info">
                 <div class="product-image">
                     <?php echo $product->get_image('thumbnail'); ?>
                 </div>
-                <div class="product-details">
+                <div class="product-details-delete">
                     <h3><?php echo esc_html($product->get_name()); ?></h3>
                     <p class="warning-text">
                         <?php _e('Are you sure you want to delete this song? This action cannot be undone.', 'tipping-addons-jetengine'); ?>
@@ -76,7 +79,7 @@ class DeleteProductHandler {
             <form method="post" class="delete-confirmation-form">
                 <input type="hidden" name="confirm_delete" value="yes">
                 <?php wp_nonce_field('delete_artist_product_' . $product->get_id()); ?>
-                
+
                 <div class="button-group">
                     <button type="submit" class="button delete-button">
                         <?php _e('Yes, Delete Song', 'tipping-addons-jetengine'); ?>
@@ -141,7 +144,7 @@ class DeleteProductHandler {
                 background: #5a6268 !important;
             }
         </style>
-        <?php
+<?php
     }
 }
 ?>
