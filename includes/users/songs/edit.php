@@ -15,7 +15,7 @@ class EditProductHandler {
 
         if (!$product || $product_post->post_author != get_current_user_id()) {
             wc_add_notice(__('You do not have permission to edit this product.', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('manage-products'));
+      wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
 
@@ -191,7 +191,7 @@ class EditProductHandler {
 
         wp_send_json_success([
             'message' => __('Product updated successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
-            'redirect' => wc_get_account_endpoint_url('manage-products')
+      'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
     }
 }

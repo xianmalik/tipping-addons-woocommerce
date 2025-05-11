@@ -15,7 +15,7 @@ class AddProductHandler {
 
         if ($song_count >= $max_songs) {
             wc_add_notice(__('You have reached the maximum number of songs allowed.', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('manage-products'));
+      wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
 
@@ -195,7 +195,7 @@ class AddProductHandler {
 
         wp_send_json_success([
             'message' => __('Product added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
-            'redirect' => wc_get_account_endpoint_url('manage-products')
+      'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
     }
 }

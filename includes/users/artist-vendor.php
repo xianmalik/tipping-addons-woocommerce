@@ -22,7 +22,6 @@ class ArtistVendor
         add_action('init', [$this, 'add_endpoints']);
         add_filter('woocommerce_account_menu_items', [$this, 'add_artist_menu_items']);
         add_action('woocommerce_account_artist-sales_endpoint', [$this, 'artist_sales_content']);
-        add_action('woocommerce_account_manage-songs_endpoint', [$this, 'manage_products_content']);
 
         // Import and use product management functionality
         require_once plugin_dir_path(__FILE__) . 'songs/add.php';
@@ -392,7 +391,7 @@ class ArtistVendor
 
         if (empty($product_ids)) {
             echo '<p>' . __('You haven\'t created any songs yet.', 'tipping-addons-jetengine') . '</p>';
-            echo '<p><a href="' . wc_get_account_endpoint_url('add-product') . '" class="button">' . __('Add Your First Product', 'tipping-addons-jetengine') . '</a></p>';
+            echo '<p><a href="' . wc_get_account_endpoint_url('add-song') . '" class="button">' . __('Add Your First Product', 'tipping-addons-jetengine') . '</a></p>';
             return;
         }
 
@@ -463,89 +462,6 @@ class ArtistVendor
             <?php } ?>
         </div>
     <?php
-    }
-
-    public function manage_products_content()
-    {
-        if (!is_user_logged_in()) {
-            return;
-        }
-
-        $user_id = get_current_user_id();
-        $song_count = $this->get_artist_song_count($user_id);
-        $max_songs = 5;
-
-        // Get products created by this artist
-        $args = [
-            'post_type' => 'product',
-            'posts_per_page' => -1,
-            'author' => $user_id,
-            'post_status' => ['publish', 'draft', 'pending']
-        ];
-
-        $products = get_posts($args);
-
-    ?>
-        <div class="product-management-header">
-            <h2><?php _e('Products', 'tipping-addons-jetengine'); ?></h2>
-            <?php if ($song_count < $max_songs) : ?>
-                <a href="<?php echo wc_get_account_endpoint_url('add-product'); ?>" class="see-all">
-                    <?php _e('Add New', 'tipping-addons-jetengine'); ?>
-                </a>
-            <?php endif; ?>
-        </div>
-
-        <div class="song-limit-info">
-            <p><?php printf(__('Songs: %d of %d created', 'tipping-addons-jetengine'), $song_count, $max_songs); ?></p>
-        </div>
-
-        <?php if (!empty($products)) : ?>
-            <div class="product-list">
-                <?php foreach ($products as $product) :
-                    $wc_product = wc_get_product($product->ID);
-                    $status_class = $product->post_status === 'publish' ? 'status-live' : 'status-pending';
-                ?>
-                    <div class="product-item">
-                        <div class="product-icon">
-                            <?php echo $wc_product->get_image('thumbnail'); ?>
-                        </div>
-                        <div class="product-details">
-                            <div class="product-main">
-                                <h3><?php echo esc_html($product->post_title); ?></h3>
-                                <span class="product-date"><?php echo get_the_date('j M Y', $product->ID); ?></span>
-                            </div>
-                            <div class="product-meta">
-                                <span class="product-status <?php echo $status_class; ?>">
-                                    <?php echo $product->post_status === 'publish' ? 'Published' : 'Pending'; ?>
-                                </span>
-                                <span class="product-price">
-                                    <?php echo $wc_product->get_price_html(); ?>
-                                </span>
-                                <a href="<?php echo add_query_arg('product_id', $product->ID, wc_get_account_endpoint_url('edit-product')); ?>"
-                                    class="edit-button">
-                                    <?php _e('Edit', 'tipping-addons-jetengine'); ?>
-                                </a>
-                                <a href="<?php
-                                            echo wp_nonce_url(
-                                                add_query_arg(
-                                                    array(
-                                                        'product_id' => $product->ID
-                                                    ),
-                                                    wc_get_account_endpoint_url('delete-product')
-                                                ),
-                                                'delete_artist_product_' . $product->ID
-                                            ); ?>"
-                                    class="delete-button">
-                                    <?php _e('Delete', 'tipping-addons-jetengine'); ?>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else : ?>
-            <p><?php _e('You haven\'t created any songs yet.', 'tipping-addons-jetengine'); ?></p>
-        <?php endif;
     }
 
     public function process_product_submission()
@@ -658,7 +574,7 @@ class ArtistVendor
 
         wp_send_json_success([
             'message' => __('Product added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
-            'redirect' => wc_get_account_endpoint_url('manage-products')
+            'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
     }
 
@@ -755,7 +671,7 @@ class ArtistVendor
 
         wp_send_json_success([
             'message' => __('Product updated successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
-            'redirect' => wc_get_account_endpoint_url('manage-products')
+            'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
     }
 

@@ -16,7 +16,7 @@ class DeleteProductHandler
 
         if (!wp_verify_nonce($nonce, 'delete_artist_product_' . $product_id)) {
             wc_add_notice(__('Security check failed.', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('manage-products'));
+            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
 
@@ -25,7 +25,7 @@ class DeleteProductHandler
 
         if (!$product || $product_post->post_author != get_current_user_id()) {
             wc_add_notice(__('You do not have permission to delete this product.', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('manage-products'));
+            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
 
@@ -50,7 +50,7 @@ class DeleteProductHandler
             wp_delete_post($product_id, true);
 
             wc_add_notice(__('Product deleted successfully.', 'tipping-addons-jetengine'), 'success');
-            wp_redirect(wc_get_account_endpoint_url('manage-products'));
+            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
 
@@ -84,7 +84,7 @@ class DeleteProductHandler
                     <button type="submit" class="button delete-button">
                         <?php _e('Yes, Delete Song', 'tipping-addons-jetengine'); ?>
                     </button>
-                    <a href="<?php echo wc_get_account_endpoint_url('manage-products'); ?>" class="button cancel-button">
+                    <a href="<?php echo wc_get_account_endpoint_url('manage-songs'); ?>" class="button cancel-button">
                         <?php _e('No, Keep Song', 'tipping-addons-jetengine'); ?>
                     </a>
                 </div>
