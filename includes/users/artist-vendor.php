@@ -22,22 +22,23 @@ class ArtistVendor
         add_action('init', [$this, 'add_endpoints']);
         add_filter('woocommerce_account_menu_items', [$this, 'add_artist_menu_items']);
         add_action('woocommerce_account_artist-sales_endpoint', [$this, 'artist_sales_content']);
-        add_action('woocommerce_account_manage-products_endpoint', [$this, 'manage_products_content']);
-        add_action('woocommerce_account_add-product_endpoint', [$this, 'add_product_content']);
-        add_action('woocommerce_account_edit-product_endpoint', [$this, 'edit_product_content']);
+        add_action('woocommerce_account_manage-songs_endpoint', [$this, 'manage_products_content']);
 
         // Import and use product management functionality
         require_once plugin_dir_path(__FILE__) . 'songs/add.php';
         require_once plugin_dir_path(__FILE__) . 'songs/edit.php';
         require_once plugin_dir_path(__FILE__) . 'songs/delete.php';
+        require_once plugin_dir_path(__FILE__) . 'songs/manage.php';
 
+        $manage_handler = new ManageSongsHandler();
         $add_handler = new AddProductHandler();
         $edit_handler = new EditProductHandler();
         $delete_handler = new DeleteProductHandler();
 
-        add_action('woocommerce_account_add-product_endpoint', [$add_handler, 'handle_add']);
-        add_action('woocommerce_account_edit-product_endpoint', [$edit_handler, 'handle_edit']);
-        add_action('woocommerce_account_delete-product_endpoint', [$delete_handler, 'handle_delete']);
+        add_action('woocommerce_account_add-song_endpoint', [$add_handler, 'handle_add']);
+        add_action('woocommerce_account_edit-song_endpoint', [$edit_handler, 'handle_edit']);
+        add_action('woocommerce_account_delete-song_endpoint', [$delete_handler, 'handle_delete']);
+        add_action('woocommerce_account_manage-songs_endpoint', [$manage_handler, 'handle_manage']);
         add_action('woocommerce_account_artist-profile_endpoint', [$this, 'artist_profile_content']);
 
         // Process product submission
@@ -180,7 +181,7 @@ class ArtistVendor
     {
         global $wp_query;
 
-        $endpoints = ['artist-sales', 'manage-products', 'add-product', 'edit-product', 'delete-product'];
+        $endpoints = ['artist-sales', 'manage-songs', 'add-song', 'edit-song', 'delete-song'];
 
         foreach ($endpoints as $endpoint) {
             if (isset($wp_query->query_vars[$endpoint]) && !is_user_logged_in()) {
@@ -546,174 +547,6 @@ class ArtistVendor
             <p><?php _e('You haven\'t created any songs yet.', 'tipping-addons-jetengine'); ?></p>
         <?php endif;
     }
-
-    public function add_product_content()
-    {
-        if (!is_user_logged_in()) {
-            return;
-        }
-
-        $user_id = get_current_user_id();
-        $song_count = $this->get_artist_song_count($user_id);
-        $max_songs = 5;
-
-        if ($song_count >= $max_songs) {
-        ?>
-            <div class="song-limit-reached">
-                <p><?php _e('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine'); ?></p>
-                <a href="<?php echo wc_get_account_endpoint_url('manage-products'); ?>" class="button">
-                    <?php _e('Manage Existing Songs', 'tipping-addons-jetengine'); ?>
-                </a>
-            </div>
-        <?php
-            return;
-        }
-
-        ?>
-        <h2><?php _e('Add New Music Product', 'tipping-addons-jetengine'); ?></h2>
-
-        <form id="add-artist-product-form" method="post" enctype="multipart/form-data">
-            <div class="form-message"></div>
-
-            <p>
-                <label for="product_name"><?php _e('Song Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <input type="text" name="product_name" id="product_name" required />
-            </p>
-
-            <p>
-                <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <textarea name="product_description" id="product_description" rows="5" required></textarea>
-            </p>
-
-            <p>
-                <label for="product_image"><?php _e('Song Cover', 'tipping-addons-jetengine'); ?></label>
-                <input type="file" name="product_image" id="product_image" accept="image/*" />
-            </p>
-
-            <p>
-                <label for="product_preview"><?php _e('Music Preview', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <input type="file" name="product_preview" id="product_preview" accept="audio/*" required />
-                <small><?php _e('Please upload either a portion, or your full song in MP3 format.', 'tipping-addons-jetengine'); ?></small>
-            </p>
-
-            <p>
-                <label for="product_mp3"><?php _e('MP3 File', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" required />
-                <small><?php _e('Upload the full version of your song in MP3 format', 'tipping-addons-jetengine'); ?></small>
-            </p>
-
-            <p>
-                <label for="product_wav"><?php _e('WAV File (Optional)', 'tipping-addons-jetengine'); ?></label>
-                <input type="file" name="product_wav" id="product_wav" accept=".wav" />
-                <small><?php _e('Upload a high-quality WAV version of your song (optional)', 'tipping-addons-jetengine'); ?></small>
-            </p>
-
-            <p>
-                <input type="hidden" name="action" value="submit_artist_product" />
-                <input type="hidden" name="product_nonce" value="<?php echo wp_create_nonce('submit_artist_product_nonce'); ?>" />
-                <button type="submit" class="button"><?php _e('Add Product', 'tipping-addons-jetengine'); ?></button>
-            </p>
-        </form>
-    <?php
-    }
-
-    public function edit_product_content()
-    {
-        if (!is_user_logged_in()) {
-            return;
-        }
-
-        $product_id = isset($_GET['product_id']) ? intval($_GET['product_id']) : 0;
-
-        if (!$product_id) {
-            echo '<p>' . __('No product specified.', 'tipping-addons-jetengine') . '</p>';
-            return;
-        }
-
-        $product = wc_get_product($product_id);
-        $product_post = get_post($product_id);
-
-        if (!$product || $product_post->post_author != get_current_user_id()) {
-            echo '<p>' . __('You do not have permission to edit this product.', 'tipping-addons-jetengine') . '</p>';
-            return;
-        }
-
-        // Get existing file attachments
-        $song_preview = get_post_meta($product_id, 'song_preview', true);
-        $song_mp3 = get_post_meta($product_id, 'song_mp3', true);
-        $song_wav = get_post_meta($product_id, 'song_wav', true);
-    ?>
-        <h2><?php _e('Edit Music Product', 'tipping-addons-jetengine'); ?></h2>
-
-        <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
-            <div class="form-message"></div>
-
-            <p>
-                <label for="product_name"><?php _e('Song Name', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
-            </p>
-
-            <p>
-                <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                <textarea name="product_description" id="product_description" rows="5" required><?php echo esc_textarea($product->get_description()); ?></textarea>
-            </p>
-
-            <p>
-                <label for="product_image"><?php _e('Song Cover', 'tipping-addons-jetengine'); ?></label>
-                <?php if ($product->get_image_id()) : ?>
-            <div class="current-image">
-                <?php echo $product->get_image('thumbnail'); ?>
-                <span><?php _e('Current image', 'tipping-addons-jetengine'); ?></span>
-            </div>
-        <?php endif; ?>
-        <input type="file" name="product_image" id="product_image" accept="image/*" />
-        <small><?php _e('Leave empty to keep current image', 'tipping-addons-jetengine'); ?></small>
-        </p>
-
-        <p>
-            <label for="product_preview"><?php _e('Music Preview', 'tipping-addons-jetengine'); ?></label>
-            <?php if ($song_preview) : ?>
-        <div class="current-file">
-            <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_preview)); ?></span>
-        </div>
-    <?php endif; ?>
-    <input type="file" name="product_preview" id="product_preview" accept="audio/*" />
-    <small><?php _e('Upload a 30-second preview version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-    </p>
-
-    <p>
-        <label for="product_mp3"><?php _e('MP3 File', 'tipping-addons-jetengine'); ?></label>
-        <?php if ($song_mp3) : ?>
-    <div class="current-file">
-        <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_mp3)); ?></span>
-    </div>
-<?php endif; ?>
-<input type="file" name="product_mp3" id="product_mp3" accept=".mp3" />
-<small><?php _e('Upload the full version of your song in MP3 format. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-</p>
-
-<p>
-    <label for="product_wav"><?php _e('WAV File', 'tipping-addons-jetengine'); ?></label>
-    <?php if ($song_wav) : ?>
-<div class="current-file">
-    <span><?php _e('Current file:', 'tipping-addons-jetengine'); ?> <?php echo basename(wp_get_attachment_url($song_wav)); ?></span>
-</div>
-<?php endif; ?>
-<input type="file" name="product_wav" id="product_wav" accept=".wav" />
-<small><?php _e('Upload a high-quality WAV version of your song. Leave empty to keep current file', 'tipping-addons-jetengine'); ?></small>
-</p>
-
-<p>
-    <input type="hidden" name="action" value="update_artist_product" />
-    <input type="hidden" name="product_id" value="<?php echo esc_attr($product_id); ?>" />
-    <input type="hidden" name="product_nonce" value="<?php echo wp_create_nonce('update_artist_product_nonce'); ?>" />
-    <button type="submit" class="button"><?php _e('Update Song', 'tipping-addons-jetengine'); ?></button>
-</p>
-        </form>
-    <?php
-    }
-
-
 
     public function process_product_submission()
     {
