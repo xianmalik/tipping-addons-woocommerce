@@ -42,8 +42,8 @@ class ArtistVendor
         add_action('woocommerce_account_artist-profile_endpoint', [$this, 'artist_profile_content']);
 
         // Process product submission
-        add_action('wp_ajax_submit_artist_product', [$this, 'process_product_submission']);
-        add_action('wp_ajax_update_artist_product', [$this, 'process_product_update']);
+        add_action('wp_ajax_submit_artist_product', [$add_handler, 'process_product_submission']);
+        add_action('wp_ajax_update_artist_product', [$edit_handler, 'process_product_update']);
 
         // Enqueue scripts and styles
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
@@ -141,10 +141,10 @@ class ArtistVendor
     public function add_endpoints()
     {
         add_rewrite_endpoint('artist-sales', EP_ROOT | EP_PAGES);
-        add_rewrite_endpoint('manage-products', EP_ROOT | EP_PAGES);
-        add_rewrite_endpoint('add-product', EP_ROOT | EP_PAGES);
-        add_rewrite_endpoint('edit-product', EP_ROOT | EP_PAGES);
-        add_rewrite_endpoint('delete-product', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('manage-songs', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('add-song', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('edit-song', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('delete-song', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('artist-profile', EP_ROOT | EP_PAGES);
 
         // Flush rewrite rules only once
@@ -168,7 +168,7 @@ class ArtistVendor
                 if ($key === 'dashboard') {
                     $new_items['artist-profile'] = __('Artist Profile', 'tipping-addons-jetengine');
                     $new_items['artist-sales'] = __('My Tips', 'tipping-addons-jetengine');
-                    $new_items['manage-products'] = __('Manage Songs', 'tipping-addons-jetengine');
+                    $new_items['manage-songs'] = __('Manage Songs', 'tipping-addons-jetengine');
                 }
             }
 
