@@ -162,7 +162,11 @@ class ArtistVendor
             $new_items = [];
 
             foreach ($items as $key => $item) {
-                $new_items[$key] = $item;
+                if ($key === 'orders') {
+                    $new_items[$key] = __('Tips', 'tipping-addons-jetengine');
+                } else {
+                    $new_items[$key] = $item;
+                }
 
                 if ($key === 'dashboard') {
                     $new_items['artist-profile'] = __('Artist Profile', 'tipping-addons-jetengine');
