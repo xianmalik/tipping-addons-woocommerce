@@ -66,7 +66,7 @@
     width: 100%;
     background-color: #0EA0E4;
     color: #000;
-    font-weight: 600;
+    font-weight: 500 !important;
     font-size: 18px;
     padding: 16px;
     border: none;
@@ -75,12 +75,14 @@
     transition: background-color 0.3s;
     margin-top: 10px;
     margin-bottom: 20px;
+    justify-content: center !important;
 }
 
 .artist-registration-form .register-button:hover,
 #add-artist-product-form button[type="submit"]:hover,
 #edit-artist-product-form button[type="submit"]:hover {
     background-color: #108dc7;
+    color: #FFF;
 }
 
 /* Social login buttons styling */

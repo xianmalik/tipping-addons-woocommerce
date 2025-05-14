@@ -215,7 +215,7 @@ class ArtistVendor
         // Show the registration form
 ?>
         <div class="artist-registration-form">
-            <h2><?php _e('Register as Music Artist', 'tipping-addons-jetengine'); ?></h2>
+            <h2><?php _e('Register as Artist', 'tipping-addons-jetengine'); ?></h2>
 
             <div class="registration-message"></div>
 

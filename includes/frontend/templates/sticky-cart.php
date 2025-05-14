@@ -3,7 +3,7 @@
         <!-- Left side - Login and Register buttons -->
         <div class="navbar-left">
             <?php if (!is_user_logged_in()) : ?>
-                <a href="<?php echo esc_url(wp_login_url()); ?>" class="login-button">
+                <a href="/my-account/" class="login-button">
                     <?php echo esc_html__('Login', 'tipping-addons-jetengine'); ?>
                 </a>
                 <a href="/artist-registration/" class="register-button">
@@ -58,7 +58,7 @@
     .register-button {
         display: inline-flex;
         align-items: center;
-        color: #0EA0E4;
+        color: white;
         font-size: 14px;
         font-weight: 500;
         text-decoration: none;
@@ -66,7 +66,6 @@
     }
 
     .register-button:hover {
-        color: #108dc7;
         text-decoration: none;
     }
 
