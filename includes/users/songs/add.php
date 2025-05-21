@@ -3,8 +3,10 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class AddProductHandler {
-    public function handle_add() {
+class AddProductHandler
+{
+    public function handle_add()
+    {
         if (!is_user_logged_in()) {
             return;
         }
@@ -15,7 +17,7 @@ class AddProductHandler {
 
         if ($song_count >= $max_songs) {
             wc_add_notice(__('You have reached the maximum number of songs allowed.', 'tipping-addons-jetengine'), 'error');
-      wp_redirect(wc_get_account_endpoint_url('manage-songs'));
+            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
 
@@ -23,7 +25,8 @@ class AddProductHandler {
         $this->render_add_form();
     }
 
-    private function get_artist_song_count($user_id) {
+    private function get_artist_song_count($user_id)
+    {
         $args = [
             'post_type' => 'product',
             'author' => $user_id,
@@ -35,11 +38,12 @@ class AddProductHandler {
         return count($products);
     }
 
-    private function render_add_form() {
-        ?>
+    private function render_add_form()
+    {
+?>
         <div class="add-product-form">
             <h2><?php _e('Add New Song', 'tipping-addons-jetengine'); ?></h2>
-            
+
             <form id="artist-product-form" method="post" enctype="multipart/form-data">
                 <p class="form-row">
                     <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
@@ -49,11 +53,6 @@ class AddProductHandler {
                 <p class="form-row">
                     <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?></label>
                     <textarea name="product_description" id="product_description" rows="5"></textarea>
-                </p>
-
-                <p class="form-row">
-                    <label for="product_price"><?php _e('Price', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                    <input type="number" name="product_price" id="product_price" step="0.01" min="0" required />
                 </p>
 
                 <p class="form-row">
@@ -83,10 +82,11 @@ class AddProductHandler {
                 </p>
             </form>
         </div>
-        <?php
+<?php
     }
 
-    public function process_product_submission() {
+    public function process_product_submission()
+    {
         // Verify nonce and check if user is logged in
         if (
             !isset($_POST['product_nonce']) ||
@@ -195,7 +195,7 @@ class AddProductHandler {
 
         wp_send_json_success([
             'message' => __('Product added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
-      'redirect' => wc_get_account_endpoint_url('manage-songs')
+            'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
     }
 }

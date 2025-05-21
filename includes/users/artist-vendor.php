@@ -121,8 +121,8 @@ class ArtistVendor
         );
 
         // Only enqueue account-specific scripts on account pages
-        if (is_account_page()) {
-            wp_enqueue_script(
+        // if (is_account_page()) {
+        wp_enqueue_script(
                 'tipping-addons-artist-vendor',
                 plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js',
                 array('jquery'),
@@ -134,7 +134,7 @@ class ArtistVendor
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('artist_vendor_nonce')
             ));
-        }
+        // }
     }
 
     public function add_endpoints()
@@ -162,9 +162,7 @@ class ArtistVendor
             $new_items = [];
 
             foreach ($items as $key => $item) {
-                if ($key === 'orders') {
-                    $new_items[$key] = __('Tips', 'tipping-addons-jetengine');
-                } else {
+                if ($key !== 'orders') {
                     $new_items[$key] = $item;
                 }
 
