@@ -267,7 +267,7 @@ class TipWidget extends \Elementor\Widget_Base
                     success: function(response) {
                         if (response.success) {
                             // Update cart count
-                            const cartIcon = document.querySelector('.sticky-cart-icon');
+                            const cartIcon = document.querySelector('.cart-icon-wrapper');
                             const cartCount = document.querySelector('.cart-item-count');
                             const newCount = parseInt(cartCount?.textContent || '0') + 1;
 

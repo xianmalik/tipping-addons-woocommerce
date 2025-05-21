@@ -60,7 +60,10 @@ class TippingCartIntegration {
             'page_title' => $page_title
         ));
 
-        wp_send_json_success();
+        $cart_count = WC()->cart->get_cart_contents_count();
+        wp_send_json_success(array(
+            'cart_count' => $cart_count
+        ));
     }
 
     private function create_tip_product($product_name, $amount, $post_id)
