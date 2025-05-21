@@ -47,16 +47,14 @@ class TippingCartIntegration {
             return;
         }
 
-        // Get the original product price
-        $original_price = $product->get_price();
+        // Remove these lines as we don't need to add tip to original price
+        // $original_price = $product->get_price();
+        // $total_price = $original_price + $amount;
 
-        // Calculate the total price (original price + tip)
-        $total_price = $original_price + $amount;
-
-        // Add to cart with custom price
+        // Use only the tip amount as the price
         WC()->cart->add_to_cart($product_id, 1, 0, array(), array(
-            'custom_price' => $total_price,
-            'original_price' => $original_price,
+            'custom_price' => $amount, // Changed from $total_price to just $amount
+            'original_price' => 0,      // Changed from $original_price to 0
             'tip_amount' => $amount,
             'post_id' => $post_id,
             'page_title' => $page_title
