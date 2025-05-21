@@ -159,21 +159,27 @@ class ArtistVendor
     public function add_artist_menu_items($items)
     {
         if (is_user_logged_in()) {
-            $new_items = [];
+            $user = wp_get_current_user();
+            $is_artist = in_array('music_artist_vendor', $user->roles);
+            $is_admin = in_array('administrator', $user->roles);
 
-            foreach ($items as $key => $item) {
-                if ($key !== 'orders') {
-                    $new_items[$key] = $item;
+            if ($is_artist || $is_admin) {
+                $new_items = [];
+
+                foreach ($items as $key => $item) {
+                    if ($key !== 'orders') {
+                        $new_items[$key] = $item;
+                    }
+
+                    if ($key === 'dashboard') {
+                        $new_items['artist-profile'] = __('Artist Profile', 'tipping-addons-jetengine');
+                        $new_items['artist-sales'] = __('My Tips', 'tipping-addons-jetengine');
+                        $new_items['manage-songs'] = __('Manage Songs', 'tipping-addons-jetengine');
+                    }
                 }
 
-                if ($key === 'dashboard') {
-                    $new_items['artist-profile'] = __('Artist Profile', 'tipping-addons-jetengine');
-                    $new_items['artist-sales'] = __('My Tips', 'tipping-addons-jetengine');
-                    $new_items['manage-songs'] = __('Manage Songs', 'tipping-addons-jetengine');
-                }
+                return $new_items;
             }
-
-            return $new_items;
         }
         return $items;
     }
