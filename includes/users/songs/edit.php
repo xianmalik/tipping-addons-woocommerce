@@ -31,7 +31,7 @@ class EditProductHandler
         <div class="edit-product-form">
             <h2><?php _e('Edit Song', 'tipping-addons-jetengine'); ?></h2>
 
-            <form id="artist-product-form" method="post" enctype="multipart/form-data">
+            <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
                 <p class="form-row">
                     <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                     <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
@@ -54,7 +54,7 @@ class EditProductHandler
             </p>
 
             <p class="form-row">
-                <label for="song_preview"><?php _e('Preview Audio (30s)', 'tipping-addons-jetengine'); ?></label>
+                <label for="song_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                 <?php if (get_post_meta($product->get_id(), 'song_preview', true)): ?>
             <div class="current-file">
                 <span class="file-name"><?php _e('Current preview file', 'tipping-addons-jetengine'); ?></span>

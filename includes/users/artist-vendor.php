@@ -120,21 +120,18 @@ class ArtistVendor
             '1.0.0'
         );
 
-        // Only enqueue account-specific scripts on account pages
-        // if (is_account_page()) {
         wp_enqueue_script(
-                'tipping-addons-artist-vendor',
-                plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js',
-                array('jquery'),
-                '1.0.0',
-                true
-            );
+            'tipping-addons-artist-vendor',
+            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js',
+            array('jquery'),
+            '1.0.0',
+            true
+        );
 
-            wp_localize_script('tipping-addons-artist-vendor', 'artist_vendor_params', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('artist_vendor_nonce')
-            ));
-        // }
+        wp_localize_script('tipping-addons-artist-vendor', 'artist_vendor_params', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('artist_vendor_nonce')
+        ));
     }
 
     public function add_endpoints()
@@ -167,7 +164,7 @@ class ArtistVendor
                 $new_items = [];
 
                 foreach ($items as $key => $item) {
-                    if ($key !== 'orders') {
+                    if ($key !== 'orders' && $key !== 'downloads' && $key !== 'song-downloads' && $key !== 'payment-methods') {
                         $new_items[$key] = $item;
                     }
 
@@ -437,22 +434,21 @@ class ArtistVendor
             }
         }
 
-    ?>
-        <div class="tips-summary">
-            <p class="total-tips"><?php printf(__('Total Tips: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
-            <button type="button" class="withdraw-money-btn button">
-                <?php _e('Withdraw Money', 'tipping-addons-jetengine'); ?>
-            </button>
-        </div>
+        if ($total_sales > 0) {
+            ?>
+            <div class="tips-summary">
+                <p class="total-tips"><?php printf(__('Total Tips: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
+                <button type="button" class="withdraw-money-btn button">
+                    <?php _e('Withdraw Money', 'tipping-addons-jetengine'); ?>
+                </button>
+            </div>
 
-        <div class="sales-list">
-            <?php
-            if (!empty($tips_data)) {
+            <div class="sales-list">
+                <?php
                 foreach ($tips_data as $product_id => $tip): ?>
                     <div class="sale-item">
                         <div class="sale-details">
                             <div class="sale-main">
-                                <!-- <?php echo var_dump($tip); ?> -->
                                 <h3><?php echo esc_html($tip['name']); ?></h3>
                                 <span class="sale-date"><?php echo date('j M Y', strtotime($tip->date_created)); ?></span>
                             </div>
@@ -464,12 +460,14 @@ class ArtistVendor
                             </div>
                         </div>
                     </div>
-                <?php endforeach;
-            } else { ?>
-                <p><?php _e('No sales data available yet.', 'tipping-addons-jetengine'); ?></p>
-            <?php } ?>
-        </div>
-    <?php
+                <?php endforeach; ?>
+            </div>
+            <?php
+        } else {
+            ?>
+            <p><?php _e('You haven\'t received any tip yet.', 'tipping-addons-jetengine'); ?></p>
+            <?php
+        }
     }
 
     public function process_product_submission()
@@ -883,7 +881,7 @@ class ArtistVendor
                         value="<?php echo esc_attr($display_name); ?>"
                         readonly
                         disabled />
-                    <small><?php _e('This is how your name will appear publicly', 'tipping-addons-jetengine'); ?></small>
+                    <small><?php _e('This is how your name will appear publicly. You can change your display name from account details tab', 'tipping-addons-jetengine'); ?></small>
                 </p>
 
                 <p>

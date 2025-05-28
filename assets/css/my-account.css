@@ -598,6 +598,10 @@
     background-color: #108dc7;
 }
 
+.wp-block-woocommerce-checkout-actions-block .wc-block-checkout__actions_row .wc-block-components-checkout-place-order-button .wc-block-components-checkout-place-order-button__text {
+    justify-content: center;
+}
+
 /* Login page styling */
 .woocommerce-account h1.entry-title,
 .woocommerce-account .woocommerce h2 {

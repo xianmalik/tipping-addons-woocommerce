@@ -82,7 +82,6 @@
 #add-artist-product-form button[type="submit"]:hover,
 #edit-artist-product-form button[type="submit"]:hover {
     background-color: #108dc7;
-    color: #FFF;
 }
 
 /* Social login buttons styling */

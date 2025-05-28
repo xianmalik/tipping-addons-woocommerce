@@ -46,7 +46,8 @@ jQuery(document).ready(function($) {
     });
     
     // Add product form
-    $('#add-artist-product-form').on('submit', function(e) {
+    $('#add-artist-product-form').on('submit', function (e) {
+        console.log('hello');
         e.preventDefault();
         
         var form = $(this);
@@ -92,7 +93,7 @@ jQuery(document).ready(function($) {
     });
     
     // Edit product form
-    $('#edit-artist-product-form').on('submit', function(e) {
+    $('#edit-artist-product-form').on('submit', function (e) {
         e.preventDefault();
         
         var form = $(this);

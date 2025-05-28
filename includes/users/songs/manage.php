@@ -103,7 +103,7 @@ class ManageSongsHandler
         <?php endforeach; ?>
       </div>
     <?php else : ?>
-      <p><?php _e('You haven\'t created any songs yet.', 'tipping-addons-jetengine'); ?></p>
+      <p><?php _e('You haven\'t uploaded any songs yet.', 'tipping-addons-jetengine'); ?></p>
 <?php endif;
   }
 }

@@ -44,7 +44,7 @@ class AddProductHandler
         <div class="add-product-form">
             <h2><?php _e('Add New Song', 'tipping-addons-jetengine'); ?></h2>
 
-            <form id="artist-product-form" method="post" enctype="multipart/form-data">
+            <form id="add-artist-product-form" method="post" enctype="multipart/form-data">
                 <p class="form-row">
                     <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                     <input type="text" name="product_name" id="product_name" required />
@@ -61,7 +61,7 @@ class AddProductHandler
                 </p>
 
                 <p class="form-row">
-                    <label for="song_preview"><?php _e('Preview Audio (30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="song_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                     <input type="file" name="song_preview" id="song_preview" accept="audio/*" required />
                 </p>
 
@@ -71,14 +71,14 @@ class AddProductHandler
                 </p>
 
                 <p class="form-row">
-                    <label for="song_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                    <input type="file" name="song_wav" id="song_wav" accept=".wav" required />
+                    <label for="song_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?>
+                        <input type="file" name="song_wav" id="song_wav" accept=".wav" />
                 </p>
 
                 <p class="form-submit">
                     <input type="hidden" name="action" value="submit_artist_product" />
-                    <?php wp_nonce_field('submit_artist_product'); ?>
-                    <button type="submit" class="button"><?php _e('Add Song', 'tipping-addons-jetengine'); ?></button>
+                    <?php wp_nonce_field('submit_artist_product_nonce', 'product_nonce'); ?>
+                    <button type="submit" class="button"><?php _e('Upload', 'tipping-addons-jetengine'); ?></button>
                 </p>
             </form>
         </div>
@@ -197,5 +197,37 @@ class AddProductHandler
             'message' => __('Product added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
             'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
+    }
+
+    private function upload_product_image($file_key, $product_id)
+    {
+        $product = wc_get_product($product_id);
+        if (!$product) {
+            return new WP_Error('invalid_product', __('Invalid product', 'tipping-addons-jetengine'));
+        }
+
+        $image_id = $product->upload_image($_FILES[$file_key]['tmp_name']);
+        if (is_wp_error($image_id)) {
+            return $image_id;
+        }
+
+        return $image_id;
+    }
+
+    private function upload_product_file($file_key, $product_id)
+    {
+        if (!function_exists('media_handle_upload')) {
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+        }
+
+        $attachment_id = media_handle_upload($file_key, $product_id);
+
+        if (is_wp_error($attachment_id)) {
+            return $attachment_id;
+        }
+
+        return $attachment_id;
     }
 }
