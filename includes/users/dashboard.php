@@ -6,11 +6,22 @@ if (!defined('ABSPATH')) {
 class DashboardHandler
 {
     public function __construct()
-    {
-        remove_action('woocommerce_account_content', 'woocommerce_account_content');
-        remove_action('woocommerce_account_dashboard', 'woocommerce_account_dashboard');
-        // Add our custom dashboard content after the default content
-        add_action('woocommerce_account_content', [$this, 'custom_dashboard_content'], 20);
+  {
+    remove_action('woocommerce_account_content', 'woocommerce_account_content');
+    remove_action('woocommerce_account_dashboard', 'woocommerce_account_dashboard');
+    // Add our custom dashboard content after the default content
+    add_action('woocommerce_account_content', [$this, 'custom_dashboard_content'], 20);
+
+    // Enqueue Font Awesome for icons
+    add_action('wp_enqueue_scripts', [$this, 'enqueue_dashboard_assets']);
+  }
+
+  public function enqueue_dashboard_assets()
+  {
+    if (is_account_page()) {
+      wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+      wp_enqueue_style('dashboard-cards', plugins_url('assets/css/dashboard-cards.css', dirname(dirname(__FILE__))));
+    }
     }
 
     public function custom_dashboard_content()
@@ -29,17 +40,8 @@ class DashboardHandler
             // Get total songs
             $total_songs = $this->get_artist_song_count(get_current_user_id());
 
-            echo '<div class="dashboard-summary">';
-            echo '<div class="summary-item">';
-            echo '<h3>' . __('Total Tips Received', 'tipping-addons-jetengine') . '</h3>';
-            echo '<p class="total-amount">' . wc_price($total_tips) . '</p>';
-            echo '</div>';
-
-            echo '<div class="summary-item">';
-            echo '<h3>' . __('Total Songs Added', 'tipping-addons-jetengine') . '</h3>';
-            echo '<p class="total-count">' . $total_songs . '</p>';
-            echo '</div>';
-            echo '</div>';
+      // Load the template
+      include plugin_dir_path(dirname(__FILE__)) . 'templates/dashboard-cards.php';
         } else {
             // Get songs user has tipped
             $tipped_songs = $this->get_user_tipped_songs();
