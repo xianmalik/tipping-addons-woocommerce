@@ -11,6 +11,10 @@ class ArtistVendor
         // Create custom role on plugin activation
         register_activation_hook(plugin_dir_path(dirname(dirname(__FILE__))) . 'tipping-addons-jetengine.php', [$this, 'create_artist_role']);
 
+        // Load dashboard handler
+        require_once plugin_dir_path(__FILE__) . 'dashboard.php';
+        new DashboardHandler();
+
         // Registration form shortcode
         add_shortcode('artist_registration_form', [$this, 'registration_form_shortcode']);
 
@@ -58,7 +62,6 @@ class ArtistVendor
 
         // Add signup prompt to login form
         add_action('woocommerce_login_form_start', [$this, 'add_signup_prompt_to_login']);
-
 
         add_action('wp_ajax_update_artist_profile', [$this, 'process_profile_update']);
     }
