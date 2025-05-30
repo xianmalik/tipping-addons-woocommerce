@@ -62,7 +62,7 @@ class AddProductHandler
 
                 <p class="form-row">
                     <label for="song_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                    <input type="file" name="song_preview" id="song_preview" accept="audio/*" required />
+                    <input type="file" name="song_preview" id="song_preview" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac" required />
                 </p>
 
                 <p class="form-row">

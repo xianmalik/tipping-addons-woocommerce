@@ -61,7 +61,7 @@ class EditProductHandler
                 <span class="remove-file"><?php _e('Replace', 'tipping-addons-jetengine'); ?></span>
             </div>
         <?php endif; ?>
-        <input type="file" name="song_preview" id="song_preview" accept="audio/*" />
+        <input type="file" name="song_preview" id="song_preview" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac" />
         </p>
 
         <p class="form-row">
