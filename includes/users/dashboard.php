@@ -6,22 +6,31 @@ if (!defined('ABSPATH')) {
 class DashboardHandler
 {
     public function __construct()
-  {
-    remove_action('woocommerce_account_content', 'woocommerce_account_content');
-    remove_action('woocommerce_account_dashboard', 'woocommerce_account_dashboard');
-    // Add our custom dashboard content after the default content
-    add_action('woocommerce_account_content', [$this, 'custom_dashboard_content'], 20);
+    {
+        // Remove default dashboard content
+        remove_action('woocommerce_account_dashboard', 'woocommerce_account_dashboard');
+        
+        // Add our custom dashboard content only on the main /my-account/ URL
+        add_action('template_redirect', function() {
+            global $wp;
+            $current_url = home_url($wp->request);
+            // Check if we're on exactly /my-account/ URL
+            if (trailingslashit($current_url) === trailingslashit(wc_get_page_permalink('myaccount'))) {
+                remove_action('woocommerce_account_content', 'woocommerce_account_content');
+                add_action('woocommerce_account_content', [$this, 'custom_dashboard_content'], 20);
+            }
+        });
 
-    // Enqueue Font Awesome for icons
-    add_action('wp_enqueue_scripts', [$this, 'enqueue_dashboard_assets']);
-  }
-
-  public function enqueue_dashboard_assets()
-  {
-    if (is_account_page()) {
-      wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
-      wp_enqueue_style('dashboard-cards', plugins_url('assets/css/dashboard-cards.css', dirname(dirname(__FILE__))));
+        // Enqueue Font Awesome for icons
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_dashboard_assets']);
     }
+
+    public function enqueue_dashboard_assets()
+    {
+        if (is_account_page()) {
+            wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+            wp_enqueue_style('dashboard-cards', plugins_url('assets/css/dashboard-cards.css', dirname(dirname(__FILE__))));
+        }
     }
 
     public function custom_dashboard_content()
@@ -40,8 +49,8 @@ class DashboardHandler
             // Get total songs
             $total_songs = $this->get_artist_song_count(get_current_user_id());
 
-      // Load the template
-      include plugin_dir_path(dirname(__FILE__)) . 'templates/dashboard-cards.php';
+            // Load the template
+            include plugin_dir_path(dirname(__FILE__)) . 'templates/dashboard-cards.php';
         } else {
             // Get songs user has tipped
             $tipped_songs = $this->get_user_tipped_songs();
