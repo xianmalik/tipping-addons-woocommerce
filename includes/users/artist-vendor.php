@@ -11,12 +11,12 @@ class ArtistVendor
         // Create custom role on plugin activation
         register_activation_hook(plugin_dir_path(dirname(dirname(__FILE__))) . 'tipping-addons-jetengine.php', [$this, 'create_artist_role']);
 
+        // Registration form shortcode
+        add_shortcode('artist_registration_form', [$this, 'registration_form_shortcode']);
+
         // Load dashboard handler
         require_once plugin_dir_path(__FILE__) . 'dashboard.php';
         new DashboardHandler();
-
-        // Registration form shortcode
-        add_shortcode('artist_registration_form', [$this, 'registration_form_shortcode']);
 
         // Process registration
         add_action('wp_ajax_nopriv_register_artist', [$this, 'process_registration']);
@@ -62,6 +62,7 @@ class ArtistVendor
 
         // Add signup prompt to login form
         add_action('woocommerce_login_form_start', [$this, 'add_signup_prompt_to_login']);
+
 
         add_action('wp_ajax_update_artist_profile', [$this, 'process_profile_update']);
     }
@@ -123,18 +124,21 @@ class ArtistVendor
             '1.0.0'
         );
 
+        // Only enqueue account-specific scripts on account pages
+        // if (is_account_page()) {
         wp_enqueue_script(
-            'tipping-addons-artist-vendor',
-            plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js',
-            array('jquery'),
-            '1.0.0',
-            true
-        );
+                'tipping-addons-artist-vendor',
+                plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/js/artist-vendor.js',
+                array('jquery'),
+                '1.0.0',
+                true
+            );
 
-        wp_localize_script('tipping-addons-artist-vendor', 'artist_vendor_params', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('artist_vendor_nonce')
-        ));
+            wp_localize_script('tipping-addons-artist-vendor', 'artist_vendor_params', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('artist_vendor_nonce')
+            ));
+        // }
     }
 
     public function add_endpoints()

@@ -45,6 +45,56 @@ class StickyCart
                 animation: cartBounce 0.5s ease-in-out;
             }
         </style>
+        <script>
+            jQuery(document).ready(function($) {
+                // Function to safely update cart icon
+                function updateCartIcon(cartCount) {
+                    // Update count if element exists
+                    var countElement = document.getElementById('cart-item-count');
+                    if (countElement) {
+                        countElement.textContent = cartCount;
+                    }
+
+                    // Add bounce animation if element exists
+                    var cartIcon = document.querySelector('.cart-icon-wrapper');
+                    if (cartIcon) {
+                        cartIcon.classList.remove('cart-bounce');
+                        void cartIcon.offsetWidth; // Force reflow
+                        cartIcon.classList.add('cart-bounce');
+                    }
+                }
+
+                // Handle successful tip addition
+                $(document).on('added_to_cart', function(event, fragments) {
+                    try {
+                        var cartCount = 0;
+                        if (fragments && fragments['div.widget_shopping_cart_content']) {
+                            cartCount = $(fragments['div.widget_shopping_cart_content']).find('.cart-items-count').text() || 0;
+                        } else {
+                            cartCount = WC().cart ? WC().cart.get_cart_contents_count() : 0;
+                        }
+                        updateCartIcon(cartCount);
+                    } catch (e) {
+                        console.log('Error updating cart icon:', e);
+                    }
+                });
+
+                // Also handle direct AJAX success for tip addition
+                $(document).ajaxSuccess(function(event, xhr, settings) {
+                    if (settings.url && settings.url.indexOf('add_tip_to_cart') !== -1) {
+                        try {
+                            var response = xhr.responseJSON;
+                            if (response && response.success) {
+                                var cartCount = WC().cart ? WC().cart.get_cart_contents_count() : 0;
+                                updateCartIcon(cartCount);
+                            }
+                        } catch (e) {
+                            console.log('Error handling tip addition:', e);
+                        }
+                    }
+                });
+            });
+        </script>
         <a href="<?php echo esc_url($cart_url); ?>" class="cart-icon-link">
             <div class="cart-icon-wrapper" id="cart-icon-wrapper" style="max-width: 32px;">
                 <img src="<?php echo esc_url($icon_url); ?>" alt="Cart">

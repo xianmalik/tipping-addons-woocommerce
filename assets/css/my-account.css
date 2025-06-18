@@ -579,6 +579,7 @@
 }
 
 /* Apply MyAccount button style to checkout place order button */
+.wp-block-woocommerce-proceed-to-checkout-block .wc-block-cart__submit-button,
 .wp-block-woocommerce-checkout-actions-block .wc-block-checkout__actions_row .wc-block-components-checkout-place-order-button {
     background-color: #0EA0E4;
     color: #000;
@@ -594,12 +595,9 @@
     line-height: 1;
 }
 
+.wp-block-woocommerce-proceed-to-checkout-block .wc-block-cart__submit-button:hover,
 .wp-block-woocommerce-checkout-actions-block .wc-block-checkout__actions_row .wc-block-components-checkout-place-order-button:hover {
     background-color: #108dc7;
-}
-
-.wp-block-woocommerce-checkout-actions-block .wc-block-checkout__actions_row .wc-block-components-checkout-place-order-button .wc-block-components-checkout-place-order-button__text {
-    justify-content: center;
 }
 
 /* Login page styling */

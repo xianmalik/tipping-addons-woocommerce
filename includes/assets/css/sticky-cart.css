@@ -23,6 +23,10 @@
     border-radius: 100%;
 }
 
+.cart-icon-wrapper {
+    max-width: 2rem;
+}
+
 .sticky-cart-icon:hover {
     transform: scale(1.1);
 }
@@ -39,8 +43,8 @@
 
 .cart-item-count {
     position: absolute;
-    top: -2px;
-    right: -2px;
+    top: -5px;
+    right: -5px;
     background: #ff4444;
     color: white;
     border-radius: 50%;
