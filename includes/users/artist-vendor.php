@@ -5,7 +5,6 @@ if (!defined('ABSPATH')) {
 
 class ArtistVendor
 {
-    // Add this to your ArtistVendor class constructor
     public function __construct()
     {
         // Create custom role on plugin activation
@@ -445,9 +444,12 @@ class ArtistVendor
             ?>
             <div class="tips-summary">
                 <p class="total-tips"><?php printf(__('Total Tips: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
-                <button type="button" class="withdraw-money-btn button">
-                    <?php _e('Withdraw Money', 'tipping-addons-jetengine'); ?>
-                </button>
+                
+                <?php
+                    // Include withdrawal template using singleton instance
+                    $withdrawal = ArtistWithdrawal::get_instance();
+                    $withdrawal->withdrawal_content();
+                ?>
             </div>
 
             <div class="sales-list">
@@ -457,7 +459,7 @@ class ArtistVendor
                         <div class="sale-details">
                             <div class="sale-main">
                                 <h3><?php echo esc_html($tip['name']); ?></h3>
-                                <span class="sale-date"><?php echo date('j M Y', strtotime($tip->date_created)); ?></span>
+                                <span class="sale-date"><?php echo date('j M Y'); ?></span>
                             </div>
                             <div class="sale-meta">
                                 <span class="sale-amount">
@@ -467,14 +469,12 @@ class ArtistVendor
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
-            <?php
-        } else {
-            ?>
-            <p><?php _e('You haven\'t received any tip yet.', 'tipping-addons-jetengine'); ?></p>
-            <?php
-        }
+                <?php endforeach;
+            } else { ?>
+                <p><?php _e('No tips data available yet.', 'tipping-addons-jetengine'); ?></p>
+            <?php } ?>
+        </div>
+    <?php
     }
 
     public function process_product_submission()

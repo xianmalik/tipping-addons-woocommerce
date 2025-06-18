@@ -1,0 +1,113 @@
+.withdraw-money-btn.button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 0;
+    display: inline-block;
+}
+
+.withdrawal-modal {
+    display: none;
+    position: fixed;
+    z-index: 999999;  /* Ensure it appears above other elements */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.withdrawal-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+.withdrawal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.withdrawal-form label {
+    font-weight: 600;
+}
+
+.withdrawal-form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.withdrawal-form button {
+    margin-top: 10px;
+}
+
+.withdrawal-form .error-message {
+    color: #dc3545;
+    display: none;
+    margin-top: 5px;
+}
+
+.withdrawal-history {
+    margin-top: 20px;
+}
+
+.withdrawal-history table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.withdrawal-history th,
+.withdrawal-history td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.withdrawal-history th {
+    background-color: #f8f9fa;
+}
+
+.completed {
+    color: #28a745;
+}
+
+.pending {
+    color: #ffc107;
+}
+
+.failed {
+    color: #dc3545;
+}
+
+.artist-withdrawal-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.balance-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.available-balance {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.minimum-balance-notice {
+    color: #dc3545;
+}

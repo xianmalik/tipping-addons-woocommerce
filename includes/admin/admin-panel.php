@@ -13,6 +13,7 @@ class TippingAdminPanel
 
   public function add_admin_menu()
   {
+    // Main menu
     add_menu_page(
       __('Song Tips', 'tipping-addons-jetengine'),
       __('Song Tips', 'tipping-addons-jetengine'),
@@ -21,6 +22,16 @@ class TippingAdminPanel
       [$this, 'render_admin_page'],
       'dashicons-money-alt',
       30
+    );
+
+    // PayPal Settings submenu
+    add_submenu_page(
+      'song-tips',
+      __('PayPal Settings', 'tipping-addons-jetengine'),
+      __('PayPal Settings', 'tipping-addons-jetengine'),
+      'manage_options',
+      'song-tips-paypal',
+      [$this, 'render_paypal_settings']
     );
   }
 
@@ -95,5 +106,74 @@ class TippingAdminPanel
       </table>
     </div>
 <?php
+  }
+
+  public function render_paypal_settings()
+  {
+    if (isset($_POST['submit_paypal_settings'])) {
+      if (
+        isset($_POST['tipping_paypal_client_id']) &&
+        isset($_POST['tipping_paypal_client_secret']) &&
+        isset($_POST['tipping_paypal_sandbox'])
+      ) {
+        update_option('tipping_paypal_client_id', sanitize_text_field($_POST['tipping_paypal_client_id']));
+        update_option('tipping_paypal_client_secret', sanitize_text_field($_POST['tipping_paypal_client_secret']));
+        update_option('tipping_paypal_sandbox', isset($_POST['tipping_paypal_sandbox']) ? '1' : '0');
+        
+        echo '<div class="notice notice-success"><p>' . esc_html__('Settings saved successfully!', 'tipping-addons-jetengine') . '</p></div>';
+      }
+    }
+
+    $client_id = get_option('tipping_paypal_client_id', '');
+    $client_secret = get_option('tipping_paypal_client_secret', '');
+    $sandbox_mode = get_option('tipping_paypal_sandbox', '1');
+    ?>
+    <div class="wrap">
+      <h1><?php echo esc_html__('PayPal Settings', 'tipping-addons-jetengine'); ?></h1>
+      <form method="post" action="">
+        <table class="form-table">
+          <tr>
+            <th scope="row">
+              <label for="tipping_paypal_client_id"><?php echo esc_html__('Client ID', 'tipping-addons-jetengine'); ?></label>
+            </th>
+            <td>
+              <input type="text" id="tipping_paypal_client_id" name="tipping_paypal_client_id" 
+                     value="<?php echo esc_attr($client_id); ?>" class="regular-text">
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <label for="tipping_paypal_client_secret"><?php echo esc_html__('Client Secret', 'tipping-addons-jetengine'); ?></label>
+            </th>
+            <td>
+              <input type="password" id="tipping_paypal_client_secret" name="tipping_paypal_client_secret" 
+                     value="<?php echo esc_attr($client_secret); ?>" class="regular-text">
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <?php echo esc_html__('Environment', 'tipping-addons-jetengine'); ?>
+            </th>
+            <td>
+              <fieldset>
+                <label>
+                  <input type="checkbox" name="tipping_paypal_sandbox" value="1" 
+                         <?php checked('1', $sandbox_mode); ?>>
+                  <?php echo esc_html__('Sandbox Mode', 'tipping-addons-jetengine'); ?>
+                </label>
+                <p class="description">
+                  <?php echo esc_html__('Check this to use PayPal Sandbox for testing.', 'tipping-addons-jetengine'); ?>
+                </p>
+              </fieldset>
+            </td>
+          </tr>
+        </table>
+        <p class="submit">
+          <input type="submit" name="submit_paypal_settings" class="button button-primary" 
+                 value="<?php echo esc_attr__('Save Changes', 'tipping-addons-jetengine'); ?>">
+        </p>
+      </form>
+    </div>
+    <?php
   }
 }

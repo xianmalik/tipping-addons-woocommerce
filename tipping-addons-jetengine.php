@@ -27,6 +27,46 @@ class TippingAddonsJetEngine
     public function __construct()
     {
         add_action('plugins_loaded', [$this, 'init']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
+    }
+
+    public function enqueue_styles() {
+        // Enqueue withdrawal.js
+        wp_enqueue_script(
+            'tipping-withdrawal',
+            plugin_dir_url(__FILE__) . 'assets/js/withdrawal.js',
+            ['jquery'],
+            '1.0.0',
+            true
+        );
+
+        // Localize the script with necessary data
+        wp_localize_script('tipping-withdrawal', 'tipping_addons', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'withdrawal_nonce' => wp_create_nonce('artist_withdrawal_nonce'),
+            'i18n' => array(
+                'withdrawal_title' => __('Withdraw Funds', 'tipping-addons-jetengine'),
+                'amount' => __('Amount', 'tipping-addons-jetengine'),
+                'paypal_email' => __('PayPal Email', 'tipping-addons-jetengine'),
+                'withdraw' => __('Process Withdrawal', 'tipping-addons-jetengine')
+            )
+        ));
+
+        // Enqueue withdrawal-status.js
+        wp_enqueue_script(
+            'tipping-withdrawal-status',
+            plugin_dir_url(__FILE__). 'assets/js/withdrawal-status.js',
+            ['jquery'],
+            '1.0.0',
+            true
+        );
+
+        wp_enqueue_style(
+            'tipping-withdrawal',
+            plugin_dir_url(__FILE__) . 'assets/css/withdrawal.css',
+            [],
+            '1.0.0'
+        );
     }
 
     public function init()
@@ -59,6 +99,8 @@ class TippingAddonsJetEngine
         require_once plugin_dir_path(__FILE__) . 'includes/woocommerce/cart-integration.php';
         require_once plugin_dir_path(__FILE__) . 'includes/frontend/sticky-cart.php';
         require_once plugin_dir_path(__FILE__) . 'includes/users/artist-vendor.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/users/withdrawal.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/integrations/paypal.php';
 
         // Include the performance fixes
         require_once plugin_dir_path(__FILE__) . 'includes/admin/performance-fixes.php';
