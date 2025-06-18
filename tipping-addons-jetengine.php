@@ -3,7 +3,7 @@
 /**
  * Plugin Name: JetEngine Tipping Addons
  * Description: A tipping system integrated with JetEngine and Elementor
- * Version: 1.8.2
+ * Version: 1.8.4
  * Author: Malik Zubayer
  * Text Domain: tipping-addons-jetengine
  */
@@ -99,8 +99,8 @@ class TippingAddonsJetEngine
         require_once plugin_dir_path(__FILE__) . 'includes/woocommerce/cart-integration.php';
         require_once plugin_dir_path(__FILE__) . 'includes/frontend/sticky-cart.php';
         require_once plugin_dir_path(__FILE__) . 'includes/users/artist-vendor.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/users/withdrawal.php';
         require_once plugin_dir_path(__FILE__) . 'includes/integrations/paypal.php';
+        require_once plugin_dir_path(__FILE__) . 'includes/users/withdrawal.php';
 
         // Include the performance fixes
         require_once plugin_dir_path(__FILE__) . 'includes/admin/performance-fixes.php';
