@@ -49,7 +49,7 @@ class DeleteProductHandler
             // Delete the product
             wp_delete_post($product_id, true);
 
-            wc_add_notice(__('Product deleted successfully.', 'tipping-addons-jetengine'), 'success');
+            wc_add_notice(__('Song deleted successfully.', 'tipping-addons-jetengine'), 'success');
             wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
