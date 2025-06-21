@@ -170,7 +170,7 @@ class ArtistVendor
                 $new_items = [];
 
                 foreach ($items as $key => $item) {
-                    if ($key !== 'orders' && $key !== 'downloads' && $key !== 'song-downloads' && $key !== 'payment-methods') {
+                    if ($key !== 'orders' && $key !== 'downloads' && $key !== 'song-downloads' && $key !== 'payment-methods' && $key !== 'edit-address') {
                         $new_items[$key] = $item;
                     }
 
