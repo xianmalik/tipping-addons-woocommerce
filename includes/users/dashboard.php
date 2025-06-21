@@ -55,21 +55,8 @@ class DashboardHandler
             // Get songs user has tipped
             $tipped_songs = $this->get_user_tipped_songs();
 
-            if (!empty($tipped_songs)) {
-                echo '<div class="tipped-songs">';
-                echo '<h3>' . __('Songs You Have Tipped', 'tipping-addons-jetengine') . '</h3>';
-                echo '<ul class="song-list">';
-                foreach ($tipped_songs as $song) {
-                    echo '<li>';
-                    echo '<span class="song-name">' . esc_html($song['name']) . '</span>';
-                    echo '<span class="tip-amount">' . wc_price($song['tip_amount']) . '</span>';
-                    echo '</li>';
-                }
-                echo '</ul>';
-                echo '</div>';
-            } else {
-                echo '<p>' . __('You haven\'t tipped any songs yet.', 'tipping-addons-jetengine') . '</p>';
-            }
+            // Load the template for tipped songs
+            include plugin_dir_path(dirname(__FILE__)) . 'templates/dashboard-user.php';
         }
     }
 
