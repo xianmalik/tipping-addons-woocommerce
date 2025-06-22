@@ -44,7 +44,6 @@ class EditProductHandler {
                     <?php if ($product->get_image_id()): ?>
                         <div class="current-image">
                             <?php echo $product->get_image('thumbnail'); ?>
-                            <span class="remove-image"><?php _e('Remove', 'tipping-addons-jetengine'); ?></span>
                         </div>
                     <?php endif; ?>
                     <input type="file" name="product_image" id="product_image" accept="image/*" />
@@ -99,7 +98,7 @@ class EditProductHandler {
                 <div class="form-submit">
                     <input type="hidden" name="action" value="update_artist_product" />
                     <input type="hidden" name="product_id" value="<?php echo esc_attr($product->get_id()); ?>" />
-                    <?php wp_nonce_field('update_artist_product'); ?>
+                    <?php wp_nonce_field('update_artist_product_nonce', 'product_nonce'); ?>
                     <button type="submit" class="button"><?php _e('Update Song', 'tipping-addons-jetengine'); ?></button>
                 </div>
             </form>
@@ -199,7 +198,43 @@ class EditProductHandler {
 
         wp_send_json_success([
             'message' => __('Product updated successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
-      'redirect' => wc_get_account_endpoint_url('manage-songs')
+            'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
+    }
+
+    private function upload_product_image($file_key, $product_id)
+    {
+        if (!function_exists('media_handle_upload')) {
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+        }
+
+        // Use 0 as parent ID for media upload, then we'll associate it with the product
+        $attachment_id = media_handle_upload($file_key, 0);
+
+        if (is_wp_error($attachment_id)) {
+            return $attachment_id;
+        }
+
+        return $attachment_id;
+    }
+
+    private function upload_product_file($file_key, $product_id)
+    {
+        if (!function_exists('media_handle_upload')) {
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+        }
+
+        // Use 0 as parent ID for media upload, then we'll associate it with the product
+        $attachment_id = media_handle_upload($file_key, 0);
+
+        if (is_wp_error($attachment_id)) {
+            return $attachment_id;
+        }
+
+        return $attachment_id;
     }
 }
