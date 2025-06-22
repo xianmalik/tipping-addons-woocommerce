@@ -93,9 +93,13 @@ class AddProductHandler
             !wp_verify_nonce($_POST['product_nonce'], 'submit_artist_product_nonce') ||
             !is_user_logged_in()
         ) {
-            wc_add_notice(__('Security check failed', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
-            exit;
+            if (defined('DOING_AJAX') && DOING_AJAX) {
+                wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+            } else {
+                wc_add_notice(__('Security check failed', 'tipping-addons-jetengine'), 'error');
+                wp_redirect(wc_get_account_endpoint_url('manage-songs'));
+                exit;
+            }
         }
 
         $user_id = get_current_user_id();
@@ -104,9 +108,13 @@ class AddProductHandler
 
         // Check if artist has reached the song limit
         if ($song_count >= $max_songs) {
-            wc_add_notice(__('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
-            exit;
+            if (defined('DOING_AJAX') && DOING_AJAX) {
+                wp_send_json_error(['message' => __('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine')]);
+            } else {
+                wc_add_notice(__('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine'), 'error');
+                wp_redirect(wc_get_account_endpoint_url('manage-songs'));
+                exit;
+            }
         }
 
         // Validate required fields
@@ -114,30 +122,46 @@ class AddProductHandler
         $description = wp_kses_post($_POST['product_description']);
 
         if (empty($name)) {
-            wc_add_notice(__('Please fill all required fields with valid values', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('add-song'));
-            exit;
+            if (defined('DOING_AJAX') && DOING_AJAX) {
+                wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'tipping-addons-jetengine')]);
+            } else {
+                wc_add_notice(__('Please fill all required fields with valid values', 'tipping-addons-jetengine'), 'error');
+                wp_redirect(wc_get_account_endpoint_url('add-song'));
+                exit;
+            }
         }
 
         // Validate required file uploads
         if (empty($_FILES['product_preview']['name']) || empty($_FILES['product_mp3']['name'])) {
-            wc_add_notice(__('Please upload both preview audio and full song MP3 files', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('add-song'));
-            exit;
+            if (defined('DOING_AJAX') && DOING_AJAX) {
+                wp_send_json_error(['message' => __('Please upload both preview audio and full song MP3 files', 'tipping-addons-jetengine')]);
+            } else {
+                wc_add_notice(__('Please upload both preview audio and full song MP3 files', 'tipping-addons-jetengine'), 'error');
+                wp_redirect(wc_get_account_endpoint_url('add-song'));
+                exit;
+            }
         }
 
         // Validate file uploads are not empty
         if ($_FILES['product_preview']['error'] !== UPLOAD_ERR_OK || $_FILES['product_mp3']['error'] !== UPLOAD_ERR_OK) {
-            wc_add_notice(__('There was an error uploading your files. Please try again.', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('add-song'));
-            exit;
+            if (defined('DOING_AJAX') && DOING_AJAX) {
+                wp_send_json_error(['message' => __('There was an error uploading your files. Please try again.', 'tipping-addons-jetengine')]);
+            } else {
+                wc_add_notice(__('There was an error uploading your files. Please try again.', 'tipping-addons-jetengine'), 'error');
+                wp_redirect(wc_get_account_endpoint_url('add-song'));
+                exit;
+            }
         }
 
         // Check if WooCommerce is active
         if (!class_exists('WC_Product_Simple')) {
-            wc_add_notice(__('WooCommerce is required to create products', 'tipping-addons-jetengine'), 'error');
-            wp_redirect(wc_get_account_endpoint_url('add-song'));
-            exit;
+            if (defined('DOING_AJAX') && DOING_AJAX) {
+                wp_send_json_error(['message' => __('WooCommerce is required to create products', 'tipping-addons-jetengine')]);
+            } else {
+                wc_add_notice(__('WooCommerce is required to create products', 'tipping-addons-jetengine'), 'error');
+                wp_redirect(wc_get_account_endpoint_url('add-song'));
+                exit;
+            }
         }
 
         // Create product
@@ -190,9 +214,13 @@ class AddProductHandler
         if (!empty($_FILES['product_mp3']['name'])) {
             $mp3_id = $this->upload_product_file('product_mp3', $product_id);
             if (is_wp_error($mp3_id)) {
-                wc_add_notice($mp3_id->get_error_message(), 'error');
-                wp_redirect(wc_get_account_endpoint_url('add-song'));
-                exit;
+                if (defined('DOING_AJAX') && DOING_AJAX) {
+                    wp_send_json_error(['message' => $mp3_id->get_error_message()]);
+                } else {
+                    wc_add_notice($mp3_id->get_error_message(), 'error');
+                    wp_redirect(wc_get_account_endpoint_url('add-song'));
+                    exit;
+                }
             }
 
             // Save as product meta
@@ -213,9 +241,13 @@ class AddProductHandler
         if (!empty($_FILES['product_wav']['name'])) {
             $wav_id = $this->upload_product_file('product_wav', $product_id);
             if (is_wp_error($wav_id)) {
-                wc_add_notice($wav_id->get_error_message(), 'error');
-                wp_redirect(wc_get_account_endpoint_url('add-song'));
-                exit;
+                if (defined('DOING_AJAX') && DOING_AJAX) {
+                    wp_send_json_error(['message' => $wav_id->get_error_message()]);
+                } else {
+                    wc_add_notice($wav_id->get_error_message(), 'error');
+                    wp_redirect(wc_get_account_endpoint_url('add-song'));
+                    exit;
+                }
             }
 
             // Save as product meta
@@ -237,10 +269,18 @@ class AddProductHandler
             update_post_meta($product_id, '_downloadable_files', $downloads);
         }
 
-        // Add success notice and redirect
-        wc_add_notice(__('Song added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'), 'success');
-        wp_redirect(wc_get_account_endpoint_url('manage-songs'));
-        exit;
+        // Handle success response
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            wp_send_json_success([
+                'message' => __('Song added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
+                'redirect' => wc_get_account_endpoint_url('manage-songs')
+            ]);
+        } else {
+            // Add success notice and redirect
+            wc_add_notice(__('Song added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'), 'success');
+            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
+            exit;
+        }
     }
 
     private function upload_product_image($file_key, $product_id)
