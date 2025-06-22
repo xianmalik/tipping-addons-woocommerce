@@ -286,7 +286,7 @@
 #edit-artist-product-form .current-file,
 .woocommerce-MyAccount-content .current-file,
 .manage-products-content .current-file {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     padding: 10px;
     background: #f5f5f5;
     border-radius: 8px;
@@ -319,7 +319,7 @@
 #edit-artist-product-form .current-image,
 .woocommerce-MyAccount-content .current-image,
 .manage-products-content .current-image {
-    margin-top: 10px;
+    /* margin-top: 10px; */
     margin-bottom: 15px;
 }
 

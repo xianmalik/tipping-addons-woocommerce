@@ -29,17 +29,17 @@ class EditProductHandler {
             <h2><?php _e('Edit Song', 'tipping-addons-jetengine'); ?></h2>
             
             <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
-                <p class="form-row">
+                <div class="form-row">
                     <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                     <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
-                </p>
+                </div>
 
-                <p class="form-row">
+                <div class="form-row">
                     <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?></label>
                     <textarea name="product_description" id="product_description" rows="5"><?php echo esc_textarea($product->get_description()); ?></textarea>
-                </p>
+                </div>
 
-                <p class="form-row">
+                <div class="form-row">
                     <label for="product_image"><?php _e('Song Cover Image', 'tipping-addons-jetengine'); ?></label>
                     <?php if ($product->get_image_id()): ?>
                         <div class="current-image">
@@ -48,47 +48,60 @@ class EditProductHandler {
                         </div>
                     <?php endif; ?>
                     <input type="file" name="product_image" id="product_image" accept="image/*" />
-                </p>
+                </div>
 
-                <p class="form-row">
-                	<label for="song_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                    <?php if (get_post_meta($product->get_id(), 'song_preview', true)): ?>
+                <div class="form-row">
+                    <label for="product_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <?php 
+                    $preview_id = get_post_meta($product->get_id(), 'song_preview', true);
+                    if ($preview_id): 
+                        $preview_file = get_attached_file($preview_id);
+                        $preview_filename = $preview_file ? basename($preview_file) : __('Preview file', 'tipping-addons-jetengine');
+                    ?>
                         <div class="current-file">
-                            <span class="file-name"><?php _e('Current preview file', 'tipping-addons-jetengine'); ?></span>
-                            <span class="remove-file"><?php _e('Replace', 'tipping-addons-jetengine'); ?></span>
+                            <span class="file-name"><?php echo esc_html($preview_filename); ?></span>
                         </div>
                     <?php endif; ?>
-			        <input type="file" name="song_preview" id="song_preview" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac" />
-                </p>
+                    <input type="file" name="product_preview" id="product_preview" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac" />
+                </div>
 
-                <p class="form-row">
-                    <label for="song_mp3"><?php _e('Full Song (MP3)', 'tipping-addons-jetengine'); ?></label>
-                    <?php if (get_post_meta($product->get_id(), 'song_mp3', true)): ?>
+                <div class="form-row">
+                    <label for="product_mp3"><?php _e('Full Song (MP3)', 'tipping-addons-jetengine'); ?></label>
+                    <?php 
+                    $mp3_id = get_post_meta($product->get_id(), 'song_mp3', true);
+                    if ($mp3_id): 
+                        $mp3_file = get_attached_file($mp3_id);
+                        $mp3_filename = $mp3_file ? basename($mp3_file) : __('MP3 file', 'tipping-addons-jetengine');
+                    ?>
                         <div class="current-file">
-                            <span class="file-name"><?php _e('Current MP3 file', 'tipping-addons-jetengine'); ?></span>
-                            <span class="remove-file"><?php _e('Replace', 'tipping-addons-jetengine'); ?></span>
+                            <span class="file-name"><?php echo esc_html($mp3_filename); ?></span>
                         </div>
                     <?php endif; ?>
-                    <input type="file" name="song_mp3" id="song_mp3" accept=".mp3" />
-                </p>
+                    <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" />
+                </div>
 
-                <p class="form-row">
-                    <label for="song_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?></label>
-                    <?php if (get_post_meta($product->get_id(), 'song_wav', true)): ?>
+                <div class="form-row">
+                    <label for="product_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?></label>
+                    <?php 
+                    $wav_id = get_post_meta($product->get_id(), 'song_wav', true);
+                    $wav_filename = '';
+                    if ($wav_id): 
+                        $wav_file = get_attached_file($wav_id);
+                        $wav_filename = $wav_file ? basename($wav_file) : __('WAV file', 'tipping-addons-jetengine');
+                    ?>
                         <div class="current-file">
-                            <span class="file-name"><?php _e('Current WAV file', 'tipping-addons-jetengine'); ?></span>
-                            <span class="remove-file"><?php _e('Replace', 'tipping-addons-jetengine'); ?></span>
+                            <span class="file-name"><?php echo esc_html($wav_filename); ?></span>
                         </div>
                     <?php endif; ?>
-                    <input type="file" name="song_wav" id="song_wav" accept=".wav" />
-                </p>
+                    <input type="file" name="product_wav" id="product_wav" accept=".wav" />
+                </div>
 
-                <p class="form-submit">
+                <div class="form-submit">
                     <input type="hidden" name="action" value="update_artist_product" />
                     <input type="hidden" name="product_id" value="<?php echo esc_attr($product->get_id()); ?>" />
                     <?php wp_nonce_field('update_artist_product'); ?>
                     <button type="submit" class="button"><?php _e('Update Song', 'tipping-addons-jetengine'); ?></button>
-                </p>
+                </div>
             </form>
         </div>
         <?php

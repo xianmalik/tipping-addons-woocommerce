@@ -46,49 +46,20 @@ jQuery(document).ready(function($) {
     });
     
     // Add product form
-    $('#add-artist-product-form').on('submit', function(e) {
-        e.preventDefault();
-        
+    $('#add-artist-product-form').on('submit', function (e) {
         var form = $(this);
-        var formData = new FormData(this);
-        var messageContainer = form.find('.form-message');
+        var submitButton = form.find('button[type="submit"]');
         
-        // Clear previous messages
-        messageContainer.html('').removeClass('error success');
-        
-        // Add loading state
+        // Add loading state with spinner
         form.addClass('loading');
-        form.find('button[type="submit"]').prop('disabled', true);
+        submitButton.prop('disabled', true);
         
-        $.ajax({
-            url: artist_vendor_params.ajax_url,
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                form.removeClass('loading');
-                form.find('button[type="submit"]').prop('disabled', false);
-                
-                if (response.success) {
-                    messageContainer.html('<p>' + response.data.message + '</p>').addClass('success');
-                    
-                    // Redirect if provided
-                    if (response.data.redirect) {
-                        setTimeout(function() {
-                            window.location.href = response.data.redirect;
-                        }, 2000);
-                    }
-                } else {
-                    messageContainer.html('<p>' + response.data.message + '</p>').addClass('error');
-                }
-            },
-            error: function() {
-                form.removeClass('loading');
-                form.find('button[type="submit"]').prop('disabled', false);
-                messageContainer.html('<p>An error occurred. Please try again.</p>').addClass('error');
-            }
-        });
+        // Add spinner to button
+        var originalText = submitButton.text();
+        submitButton.html('<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>' + originalText);
+
+        // Allow form to submit normally
+        // The spinner will show until the page redirects
     });
     
     // Edit product form

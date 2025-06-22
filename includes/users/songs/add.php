@@ -44,42 +44,42 @@ class AddProductHandler
         <div class="add-product-form">
             <h2><?php _e('Add New Song', 'tipping-addons-jetengine'); ?></h2>
 
-            <form id="add-artist-product-form" method="post" enctype="multipart/form-data">
-                <p class="form-row">
+            <form id="add-artist-product-form" method="post" enctype="multipart/form-data" action="">
+                <div class="form-row">
                     <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                     <input type="text" name="product_name" id="product_name" required />
-                </p>
+                </div>
 
-                <p class="form-row">
+                <div class="form-row">
                     <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?></label>
                     <textarea name="product_description" id="product_description" rows="5"></textarea>
-                </p>
+                </div>
 
-                <p class="form-row">
+                <div class="form-row">
                     <label for="product_image"><?php _e('Song Cover Image', 'tipping-addons-jetengine'); ?></label>
                     <input type="file" name="product_image" id="product_image" accept="image/*" />
-                </p>
+                </div>
 
-                <p class="form-row">
-                    <label for="song_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                    <input type="file" name="song_preview" id="song_preview" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac" required />
-                </p>
+                <div class="form-row">
+                    <label for="product_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <input type="file" name="product_preview" id="product_preview" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac" required />
+                </div>
 
-                <p class="form-row">
-                    <label for="song_mp3"><?php _e('Full Song (MP3)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
-                    <input type="file" name="song_mp3" id="song_mp3" accept=".mp3" required />
-                </p>
+                <div class="form-row">
+                    <label for="product_mp3"><?php _e('Full Song (MP3)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" required />
+                </div>
 
-                <p class="form-row">
-                    <label for="song_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?>
-                        <input type="file" name="song_wav" id="song_wav" accept=".wav" />
-                </p>
+                <div class="form-row">
+                    <label for="product_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?></label>
+                    <input type="file" name="product_wav" id="product_wav" accept=".wav" />
+                </div>
 
-                <p class="form-submit">
+                <div class="form-submit">
                     <input type="hidden" name="action" value="submit_artist_product" />
                     <?php wp_nonce_field('submit_artist_product_nonce', 'product_nonce'); ?>
                     <button type="submit" class="button"><?php _e('Upload', 'tipping-addons-jetengine'); ?></button>
-                </p>
+                </div>
             </form>
         </div>
 <?php
@@ -93,7 +93,9 @@ class AddProductHandler
             !wp_verify_nonce($_POST['product_nonce'], 'submit_artist_product_nonce') ||
             !is_user_logged_in()
         ) {
-            wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+            wc_add_notice(__('Security check failed', 'tipping-addons-jetengine'), 'error');
+            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
+            exit;
         }
 
         $user_id = get_current_user_id();
@@ -102,17 +104,40 @@ class AddProductHandler
 
         // Check if artist has reached the song limit
         if ($song_count >= $max_songs) {
-            wp_send_json_error([
-                'message' => __('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine')
-            ]);
+            wc_add_notice(__('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine'), 'error');
+            wp_redirect(wc_get_account_endpoint_url('manage-songs'));
+            exit;
         }
 
         // Validate required fields
         $name = sanitize_text_field($_POST['product_name']);
         $description = wp_kses_post($_POST['product_description']);
 
-        if (empty($name) || empty($description)) {
-            wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'tipping-addons-jetengine')]);
+        if (empty($name)) {
+            wc_add_notice(__('Please fill all required fields with valid values', 'tipping-addons-jetengine'), 'error');
+            wp_redirect(wc_get_account_endpoint_url('add-song'));
+            exit;
+        }
+
+        // Validate required file uploads
+        if (empty($_FILES['product_preview']['name']) || empty($_FILES['product_mp3']['name'])) {
+            wc_add_notice(__('Please upload both preview audio and full song MP3 files', 'tipping-addons-jetengine'), 'error');
+            wp_redirect(wc_get_account_endpoint_url('add-song'));
+            exit;
+        }
+
+        // Validate file uploads are not empty
+        if ($_FILES['product_preview']['error'] !== UPLOAD_ERR_OK || $_FILES['product_mp3']['error'] !== UPLOAD_ERR_OK) {
+            wc_add_notice(__('There was an error uploading your files. Please try again.', 'tipping-addons-jetengine'), 'error');
+            wp_redirect(wc_get_account_endpoint_url('add-song'));
+            exit;
+        }
+
+        // Check if WooCommerce is active
+        if (!class_exists('WC_Product_Simple')) {
+            wc_add_notice(__('WooCommerce is required to create products', 'tipping-addons-jetengine'), 'error');
+            wp_redirect(wc_get_account_endpoint_url('add-song'));
+            exit;
         }
 
         // Create product
@@ -140,6 +165,21 @@ class AddProductHandler
             if (!is_wp_error($image_id)) {
                 $product->set_image_id($image_id);
                 $product->save();
+            } else {
+                // Log the error but don't stop the process
+                error_log('Failed to upload product image: ' . $image_id->get_error_message());
+            }
+        }
+
+        // Upload song preview if provided
+        if (!empty($_FILES['product_preview']['name'])) {
+            $preview_id = $this->upload_product_file('product_preview', $product_id);
+            if (!is_wp_error($preview_id)) {
+                // Save as product meta
+                update_post_meta($product_id, 'song_preview', $preview_id);
+            } else {
+                // Log the error but don't stop the process
+                error_log('Failed to upload song preview: ' . $preview_id->get_error_message());
             }
         }
 
@@ -150,7 +190,9 @@ class AddProductHandler
         if (!empty($_FILES['product_mp3']['name'])) {
             $mp3_id = $this->upload_product_file('product_mp3', $product_id);
             if (is_wp_error($mp3_id)) {
-                wp_send_json_error(['message' => $mp3_id->get_error_message()]);
+                wc_add_notice($mp3_id->get_error_message(), 'error');
+                wp_redirect(wc_get_account_endpoint_url('add-song'));
+                exit;
             }
 
             // Save as product meta
@@ -171,7 +213,9 @@ class AddProductHandler
         if (!empty($_FILES['product_wav']['name'])) {
             $wav_id = $this->upload_product_file('product_wav', $product_id);
             if (is_wp_error($wav_id)) {
-                wp_send_json_error(['message' => $wav_id->get_error_message()]);
+                wc_add_notice($wav_id->get_error_message(), 'error');
+                wp_redirect(wc_get_account_endpoint_url('add-song'));
+                exit;
             }
 
             // Save as product meta
@@ -193,25 +237,28 @@ class AddProductHandler
             update_post_meta($product_id, '_downloadable_files', $downloads);
         }
 
-        wp_send_json_success([
-            'message' => __('Product added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
-            'redirect' => wc_get_account_endpoint_url('manage-songs')
-        ]);
+        // Add success notice and redirect
+        wc_add_notice(__('Song added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'), 'success');
+        wp_redirect(wc_get_account_endpoint_url('manage-songs'));
+        exit;
     }
 
     private function upload_product_image($file_key, $product_id)
     {
-        $product = wc_get_product($product_id);
-        if (!$product) {
-            return new WP_Error('invalid_product', __('Invalid product', 'tipping-addons-jetengine'));
+        if (!function_exists('media_handle_upload')) {
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
         }
 
-        $image_id = $product->upload_image($_FILES[$file_key]['tmp_name']);
-        if (is_wp_error($image_id)) {
-            return $image_id;
+        // Use 0 as parent ID for media upload, then we'll associate it with the product
+        $attachment_id = media_handle_upload($file_key, 0);
+
+        if (is_wp_error($attachment_id)) {
+            return $attachment_id;
         }
 
-        return $image_id;
+        return $attachment_id;
     }
 
     private function upload_product_file($file_key, $product_id)
@@ -222,7 +269,8 @@ class AddProductHandler
             require_once(ABSPATH . 'wp-admin/includes/image.php');
         }
 
-        $attachment_id = media_handle_upload($file_key, $product_id);
+        // Use 0 as parent ID for media upload, then we'll associate it with the product
+        $attachment_id = media_handle_upload($file_key, 0);
 
         if (is_wp_error($attachment_id)) {
             return $attachment_id;
