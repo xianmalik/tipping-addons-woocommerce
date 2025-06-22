@@ -29,6 +29,8 @@ class EditProductHandler {
             <h2><?php _e('Edit Song', 'tipping-addons-jetengine'); ?></h2>
             
             <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
+                <div class="form-message"></div>
+                
                 <div class="form-row">
                     <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
                     <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />

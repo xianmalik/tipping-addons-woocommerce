@@ -57,9 +57,9 @@ jQuery(document).ready(function($) {
         form.addClass('loading');
         submitButton.prop('disabled', true);
         
-        // Add spinner to button
+        // Add spinner to button (left side)
         var originalText = submitButton.text();
-        submitButton.html('<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>' + originalText);
+        submitButton.html('<span class="spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 8px;"></span>' + originalText);
 
         $.ajax({
             url: artist_vendor_params.ajax_url,
@@ -68,10 +68,6 @@ jQuery(document).ready(function($) {
             processData: false,
             contentType: false,
             success: function (response) {
-                form.removeClass('loading');
-                submitButton.prop('disabled', false);
-                submitButton.html(originalText);
-
                 if (response.success) {
                     // Show success message
                     if (response.data.message) {
@@ -79,12 +75,20 @@ jQuery(document).ready(function($) {
                         console.log(response.data.message);
                     }
 
+                    // Keep button disabled with spinner during redirect
+                    submitButton.prop('disabled', true);
+                    submitButton.html('<span class="spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 8px;"></span>' + originalText);
+
                     // Redirect if provided
                     if (response.data.redirect) {
                         window.location.href = response.data.redirect;
                     }
                 } else {
-                    // Show error message
+                    // Show error message and re-enable button
+                    form.removeClass('loading');
+                    submitButton.prop('disabled', false);
+                    submitButton.html(originalText);
+
                     if (response.data.message) {
                         alert(response.data.message);
                     } else {
@@ -93,6 +97,7 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function () {
+                // Show error and re-enable button
                 form.removeClass('loading');
                 submitButton.prop('disabled', false);
                 submitButton.html(originalText);
@@ -105,16 +110,30 @@ jQuery(document).ready(function($) {
     $('#edit-artist-product-form').on('submit', function(e) {
         e.preventDefault();
         
+        console.log('Edit form submitted'); // Debug log
+
         var form = $(this);
         var formData = new FormData(this);
+        var submitButton = form.find('button[type="submit"]');
         var messageContainer = form.find('.form-message');
         
+        console.log('Submit button found:', submitButton.length); // Debug log
+        console.log('Message container found:', messageContainer.length); // Debug log
+
         // Clear previous messages
         messageContainer.html('').removeClass('error success');
         
         // Add loading state
         form.addClass('loading');
-        form.find('button[type="submit"]').prop('disabled', true);
+        submitButton.prop('disabled', true);
+
+        // Add spinner to button (left side)
+        var originalText = submitButton.text();
+        console.log('Original button text:', originalText); // Debug log
+
+        submitButton.html('<span class="spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 8px;"></span>' + originalText);
+
+        console.log('Spinner added to button'); // Debug log
         
         $.ajax({
             url: artist_vendor_params.ajax_url,
@@ -122,13 +141,16 @@ jQuery(document).ready(function($) {
             data: formData,
             processData: false,
             contentType: false,
-            success: function(response) {
-                form.removeClass('loading');
-                form.find('button[type="submit"]').prop('disabled', false);
+            success: function (response) {
+                console.log('AJAX response:', response); // Debug log
                 
                 if (response.success) {
                     messageContainer.html('<p>' + response.data.message + '</p>').addClass('success');
                     
+                    // Keep button disabled with spinner during redirect
+                    submitButton.prop('disabled', true);
+                    submitButton.html('<span class="spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 8px;"></span>' + originalText);
+
                     // Redirect if provided
                     if (response.data.redirect) {
                         setTimeout(function() {
@@ -136,12 +158,19 @@ jQuery(document).ready(function($) {
                         }, 2000);
                     }
                 } else {
+                    // Show error message and re-enable button
+                    form.removeClass('loading');
+                    submitButton.prop('disabled', false);
+                    submitButton.html(originalText);
                     messageContainer.html('<p>' + response.data.message + '</p>').addClass('error');
                 }
             },
-            error: function() {
+            error: function (xhr, status, error) {
+                console.log('AJAX error:', error); // Debug log
+            // Show error and re-enable button
                 form.removeClass('loading');
-                form.find('button[type="submit"]').prop('disabled', false);
+                submitButton.prop('disabled', false);
+                submitButton.html(originalText);
                 messageContainer.html('<p>An error occurred. Please try again.</p>').addClass('error');
             }
         });
