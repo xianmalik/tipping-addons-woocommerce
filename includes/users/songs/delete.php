@@ -31,23 +31,11 @@ class DeleteProductHandler
 
         // If form is submitted
         if (isset($_POST['confirm_delete']) && $_POST['confirm_delete'] === 'yes') {
-            // Delete product files
-            $file_types = ['song_preview', 'song_mp3', 'song_wav'];
-            foreach ($file_types as $type) {
-                $file_id = get_post_meta($product_id, $type, true);
-                if ($file_id) {
-                    wp_delete_attachment($file_id, true);
-                }
-            }
-
-            // Delete product thumbnail if exists
-            $thumbnail_id = get_post_thumbnail_id($product_id);
-            if ($thumbnail_id) {
-                wp_delete_attachment($thumbnail_id, true);
-            }
-
-            // Delete the product
-            wp_delete_post($product_id, true);
+            // Instead of deleting the product, set its status to 'private' (hidden from users)
+            wp_update_post([
+                'ID' => $product_id,
+                'post_status' => 'private',
+            ]);
 
             wc_add_notice(__('Song deleted successfully.', 'tipping-addons-jetengine'), 'success');
             wp_redirect(wc_get_account_endpoint_url('manage-songs'));
