@@ -1,6 +1,6 @@
 <?php
 
-namespace TippingAddonsJetEngine\Widgets;
+namespace PaperTippingAddons\Widgets;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -15,7 +15,7 @@ class TipWidget extends \Elementor\Widget_Base
 
     public function get_title()
     {
-        return esc_html__('Tip Widget', 'tipping-addons-jetengine');
+        return esc_html__('Tip Widget', 'paper-tipping-addons');
     }
 
     public function get_icon()
@@ -33,7 +33,7 @@ class TipWidget extends \Elementor\Widget_Base
         $this->start_controls_section(
             'content_section',
             [
-                'label' => esc_html__('Content', 'tipping-addons-jetengine'),
+                'label' => esc_html__('Content', 'paper-tipping-addons'),
                 'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
             ]
         );
@@ -41,7 +41,7 @@ class TipWidget extends \Elementor\Widget_Base
         $this->add_control(
             'default_amount',
             [
-                'label' => esc_html__('Default Amount', 'tipping-addons-jetengine'),
+                'label' => esc_html__('Default Amount', 'paper-tipping-addons'),
                 'type' => \Elementor\Controls_Manager::NUMBER,
                 'default' => 5,
                 'min' => 1,
@@ -145,7 +145,7 @@ class TipWidget extends \Elementor\Widget_Base
                 }
             </style>
             <button class="tip-now-button" onclick="addTipToCart(this)">
-                <?php echo esc_html__('Tip Now', 'tipping-addons-jetengine'); ?>
+                <?php echo esc_html__('Tip Now', 'paper-tipping-addons'); ?>
             </button>
         </div>
 

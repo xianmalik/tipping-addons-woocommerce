@@ -15,8 +15,8 @@ class TippingAdminPanel
   {
     // Main menu
     add_menu_page(
-      __('Song Tips', 'tipping-addons-jetengine'),
-      __('Song Tips', 'tipping-addons-jetengine'),
+      __('Song Tips', 'paper-tipping-addons'),
+      __('Song Tips', 'paper-tipping-addons'),
       'manage_options',
       'song-tips',
       [$this, 'render_admin_page'],
@@ -27,8 +27,8 @@ class TippingAdminPanel
     // PayPal Settings submenu
     add_submenu_page(
       'song-tips',
-      __('PayPal Settings', 'tipping-addons-jetengine'),
-      __('PayPal Settings', 'tipping-addons-jetengine'),
+      __('PayPal Settings', 'paper-tipping-addons'),
+      __('PayPal Settings', 'paper-tipping-addons'),
       'manage_options',
       'song-tips-paypal',
       [$this, 'render_paypal_settings']
@@ -65,14 +65,14 @@ class TippingAdminPanel
     $tips = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
 ?>
     <div class="wrap">
-      <h1><?php echo esc_html__('Song Tips', 'tipping-addons-jetengine'); ?></h1>
+      <h1><?php echo esc_html__('Song Tips', 'paper-tipping-addons'); ?></h1>
       <table class="wp-list-table widefat fixed striped">
         <thead>
           <tr>
-            <th><?php echo esc_html__('Song', 'tipping-addons-jetengine'); ?></th>
-            <th><?php echo esc_html__('Tip Amount', 'tipping-addons-jetengine'); ?></th>
-            <th><?php echo esc_html__('Customer', 'tipping-addons-jetengine'); ?></th>
-            <th><?php echo esc_html__('Date', 'tipping-addons-jetengine'); ?></th>
+            <th><?php echo esc_html__('Song', 'paper-tipping-addons'); ?></th>
+            <th><?php echo esc_html__('Tip Amount', 'paper-tipping-addons'); ?></th>
+            <th><?php echo esc_html__('Customer', 'paper-tipping-addons'); ?></th>
+            <th><?php echo esc_html__('Date', 'paper-tipping-addons'); ?></th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +90,7 @@ class TippingAdminPanel
                 if ($tip->customer_name) {
                   echo esc_html($tip->customer_name);
                 } else {
-                  echo esc_html__('Anonymous', 'tipping-addons-jetengine');
+                  echo esc_html__('Anonymous', 'paper-tipping-addons');
                 }
                 ?>
               </td>
@@ -99,7 +99,7 @@ class TippingAdminPanel
           <?php endforeach; ?>
           <?php if (empty($tips)): ?>
             <tr>
-              <td colspan="4"><?php echo esc_html__('No tips found.', 'tipping-addons-jetengine'); ?></td>
+              <td colspan="4"><?php echo esc_html__('No tips found.', 'paper-tipping-addons'); ?></td>
             </tr>
           <?php endif; ?>
         </tbody>
@@ -120,7 +120,7 @@ class TippingAdminPanel
         update_option('tipping_paypal_client_secret', sanitize_text_field($_POST['tipping_paypal_client_secret']));
         update_option('tipping_paypal_sandbox', isset($_POST['tipping_paypal_sandbox']) ? '1' : '0');
         
-        echo '<div class="notice notice-success"><p>' . esc_html__('Settings saved successfully!', 'tipping-addons-jetengine') . '</p></div>';
+        echo '<div class="notice notice-success"><p>' . esc_html__('Settings saved successfully!', 'paper-tipping-addons') . '</p></div>';
       }
     }
 
@@ -129,12 +129,12 @@ class TippingAdminPanel
     $sandbox_mode = get_option('tipping_paypal_sandbox', '1');
     ?>
     <div class="wrap">
-      <h1><?php echo esc_html__('PayPal Settings', 'tipping-addons-jetengine'); ?></h1>
+      <h1><?php echo esc_html__('PayPal Settings', 'paper-tipping-addons'); ?></h1>
       <form method="post" action="">
         <table class="form-table">
           <tr>
             <th scope="row">
-              <label for="tipping_paypal_client_id"><?php echo esc_html__('Client ID', 'tipping-addons-jetengine'); ?></label>
+              <label for="tipping_paypal_client_id"><?php echo esc_html__('Client ID', 'paper-tipping-addons'); ?></label>
             </th>
             <td>
               <input type="text" id="tipping_paypal_client_id" name="tipping_paypal_client_id" 
@@ -143,7 +143,7 @@ class TippingAdminPanel
           </tr>
           <tr>
             <th scope="row">
-              <label for="tipping_paypal_client_secret"><?php echo esc_html__('Client Secret', 'tipping-addons-jetengine'); ?></label>
+              <label for="tipping_paypal_client_secret"><?php echo esc_html__('Client Secret', 'paper-tipping-addons'); ?></label>
             </th>
             <td>
               <input type="password" id="tipping_paypal_client_secret" name="tipping_paypal_client_secret" 
@@ -152,17 +152,17 @@ class TippingAdminPanel
           </tr>
           <tr>
             <th scope="row">
-              <?php echo esc_html__('Environment', 'tipping-addons-jetengine'); ?>
+              <?php echo esc_html__('Environment', 'paper-tipping-addons'); ?>
             </th>
             <td>
               <fieldset>
                 <label>
                   <input type="checkbox" name="tipping_paypal_sandbox" value="1" 
                          <?php checked('1', $sandbox_mode); ?>>
-                  <?php echo esc_html__('Sandbox Mode', 'tipping-addons-jetengine'); ?>
+                  <?php echo esc_html__('Sandbox Mode', 'paper-tipping-addons'); ?>
                 </label>
                 <p class="description">
-                  <?php echo esc_html__('Check this to use PayPal Sandbox for testing.', 'tipping-addons-jetengine'); ?>
+                  <?php echo esc_html__('Check this to use PayPal Sandbox for testing.', 'paper-tipping-addons'); ?>
                 </p>
               </fieldset>
             </td>
@@ -170,7 +170,7 @@ class TippingAdminPanel
         </table>
         <p class="submit">
           <input type="submit" name="submit_paypal_settings" class="button button-primary" 
-                 value="<?php echo esc_attr__('Save Changes', 'tipping-addons-jetengine'); ?>">
+                 value="<?php echo esc_attr__('Save Changes', 'paper-tipping-addons'); ?>">
         </p>
       </form>
     </div>

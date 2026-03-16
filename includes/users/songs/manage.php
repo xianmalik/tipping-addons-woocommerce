@@ -45,16 +45,16 @@ class ManageSongsHandler
   {
 ?>
     <div class="product-management-header">
-      <h2><?php _e('Products', 'tipping-addons-jetengine'); ?></h2>
+      <h2><?php _e('Products', 'paper-tipping-addons'); ?></h2>
       <?php if ($song_count < $max_songs) : ?>
         <a href="<?php echo wc_get_account_endpoint_url('add-song'); ?>" class="see-all">
-          <?php _e('Add New', 'tipping-addons-jetengine'); ?>
+          <?php _e('Add New', 'paper-tipping-addons'); ?>
         </a>
       <?php endif; ?>
     </div>
 
     <div class="song-limit-info">
-      <p><?php printf(__('Songs: %d of %d created', 'tipping-addons-jetengine'), $song_count, $max_songs); ?></p>
+      <p><?php printf(__('Songs: %d of %d created', 'paper-tipping-addons'), $song_count, $max_songs); ?></p>
       <p>Add your 5 best songs to your profile</p>
     </div>
 
@@ -82,7 +82,7 @@ class ManageSongsHandler
                 </span>
                 <a href="<?php echo add_query_arg('product_id', $product->ID, wc_get_account_endpoint_url('edit-song')); ?>"
                   class="edit-button">
-                  <?php _e('Edit', 'tipping-addons-jetengine'); ?>
+                  <?php _e('Edit', 'paper-tipping-addons'); ?>
                 </a>
                 <a href="<?php
                           echo wp_nonce_url(
@@ -95,7 +95,7 @@ class ManageSongsHandler
                             'delete_artist_product_' . $product->ID
                           ); ?>"
                   class="delete-button">
-                  <?php _e('Delete', 'tipping-addons-jetengine'); ?>
+                  <?php _e('Delete', 'paper-tipping-addons'); ?>
                 </a>
               </div>
             </div>
@@ -103,7 +103,7 @@ class ManageSongsHandler
         <?php endforeach; ?>
       </div>
     <?php else : ?>
-      <p><?php _e('You haven\'t uploaded any songs yet.', 'tipping-addons-jetengine'); ?></p>
+      <p><?php _e('You haven\'t uploaded any songs yet.', 'paper-tipping-addons'); ?></p>
 <?php endif;
   }
 }

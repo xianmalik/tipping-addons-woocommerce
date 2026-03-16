@@ -1,18 +1,18 @@
 <?php
 
 /**
- * Plugin Name: JetEngine Tipping Addons
+ * Plugin Name: Paper Tipping Addons
  * Description: A tipping system integrated with JetEngine and Elementor
  * Version: 1.8.5
  * Author: Malik Zubayer
- * Text Domain: tipping-addons-jetengine
+ * Text Domain: paper-tipping-addons
  */
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class TippingAddonsJetEngine
+class PaperTippingAddons
 {
     private static $instance = null;
 
@@ -45,10 +45,10 @@ class TippingAddonsJetEngine
             'ajax_url' => admin_url('admin-ajax.php'),
             'withdrawal_nonce' => wp_create_nonce('artist_withdrawal_nonce'),
             'i18n' => array(
-                'withdrawal_title' => __('Withdraw Funds', 'tipping-addons-jetengine'),
-                'amount' => __('Amount', 'tipping-addons-jetengine'),
-                'paypal_email' => __('PayPal Email', 'tipping-addons-jetengine'),
-                'withdraw' => __('Process Withdrawal', 'tipping-addons-jetengine')
+                'withdrawal_title' => __('Withdraw Funds', 'paper-tipping-addons'),
+                'amount' => __('Amount', 'paper-tipping-addons'),
+                'paypal_email' => __('PayPal Email', 'paper-tipping-addons'),
+                'withdraw' => __('Process Withdrawal', 'paper-tipping-addons')
             )
         ));
 
@@ -180,30 +180,30 @@ class TippingAddonsJetEngine
 
     public function register_widgets($widgets_manager)
     {
-        $widgets_manager->register(new \TippingAddonsJetEngine\Widgets\TipWidget());
+        $widgets_manager->register(new \PaperTippingAddons\Widgets\TipWidget());
     }
 
     public function missing_elementor_notice()
     {
         echo '<div class="notice notice-warning"><p>' .
-            esc_html__('JetEngine Tipping Addons requires Elementor to be installed and activated.', 'tipping-addons-jetengine') .
+            esc_html__('JetEngine Tipping Addons requires Elementor to be installed and activated.', 'paper-tipping-addons') .
             '</p></div>';
     }
 
     public function missing_jetengine_notice()
     {
         echo '<div class="notice notice-warning"><p>' .
-            esc_html__('JetEngine Tipping Addons requires JetEngine to be installed and activated.', 'tipping-addons-jetengine') .
+            esc_html__('JetEngine Tipping Addons requires JetEngine to be installed and activated.', 'paper-tipping-addons') .
             '</p></div>';
     }
 
     public function missing_woocommerce_notice()
     {
         echo '<div class="notice notice-warning"><p>' .
-            esc_html__('JetEngine Tipping Addons requires WooCommerce to be installed and activated.', 'tipping-addons-jetengine') .
+            esc_html__('JetEngine Tipping Addons requires WooCommerce to be installed and activated.', 'paper-tipping-addons') .
             '</p></div>';
     }
 }
 
 // Initialize the plugin
-TippingAddonsJetEngine::get_instance();
+PaperTippingAddons::get_instance();

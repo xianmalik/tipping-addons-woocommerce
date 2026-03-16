@@ -8,7 +8,7 @@ class ArtistVendor
     public function __construct()
     {
         // Create custom role on plugin activation
-        register_activation_hook(plugin_dir_path(dirname(dirname(__FILE__))) . 'tipping-addons-jetengine.php', [$this, 'create_artist_role']);
+        register_activation_hook(plugin_dir_path(dirname(dirname(__FILE__))) . 'paper-tipping-addons.php', [$this, 'create_artist_role']);
 
         // Registration form shortcode
         add_shortcode('artist_registration_form', [$this, 'registration_form_shortcode']);
@@ -175,9 +175,9 @@ class ArtistVendor
                     }
 
                     if ($key === 'dashboard') {
-                        $new_items['artist-profile'] = __('Artist Profile', 'tipping-addons-jetengine');
-                        $new_items['artist-sales'] = __('My Tips', 'tipping-addons-jetengine');
-                        $new_items['manage-songs'] = __('Manage Songs', 'tipping-addons-jetengine');
+                        $new_items['artist-profile'] = __('Artist Profile', 'paper-tipping-addons');
+                        $new_items['artist-sales'] = __('My Tips', 'paper-tipping-addons');
+                        $new_items['manage-songs'] = __('Manage Songs', 'paper-tipping-addons');
                     }
                 }
 
@@ -207,7 +207,7 @@ class ArtistVendor
 
         // If user is logged in, show a message
         if (is_user_logged_in()) {
-            echo '<p>' . __('You are already registered and logged in.', 'tipping-addons-jetengine') . '</p>';
+            echo '<p>' . __('You are already registered and logged in.', 'paper-tipping-addons') . '</p>';
             return ob_get_clean();
         }
 
@@ -222,23 +222,23 @@ class ArtistVendor
         // Show the registration form
 ?>
         <div class="artist-registration-form">
-            <h2><?php _e('Register as Artist', 'tipping-addons-jetengine'); ?></h2>
+            <h2><?php _e('Register as Artist', 'paper-tipping-addons'); ?></h2>
 
             <div class="registration-message"></div>
 
             <form id="artist-registration-form" method="post">
                 <p>
-                    <label for="artist_username"><?php _e('Username', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="artist_username"><?php _e('Username', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="text" name="artist_username" id="artist_username" placeholder="Choose a username" required />
                 </p>
 
                 <p>
-                    <label for="artist_email"><?php _e('Email', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="artist_email"><?php _e('Email', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="email" name="artist_email" id="artist_email" placeholder="Your email address" required />
                 </p>
 
                 <p class="password-field-container">
-                    <label for="artist_password"><?php _e('Password', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="artist_password"><?php _e('Password', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="password" name="artist_password" id="artist_password" placeholder="Create a password" required />
                     <span class="password-toggle" onclick="togglePasswordVisibility('artist_password')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -249,7 +249,7 @@ class ArtistVendor
                 </p>
 
                 <p class="password-field-container">
-                    <label for="artist_password_confirm"><?php _e('Confirm Password', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="artist_password_confirm"><?php _e('Confirm Password', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="password" name="artist_password_confirm" id="artist_password_confirm" placeholder="Confirm your password" required />
                     <span class="password-toggle" onclick="togglePasswordVisibility('artist_password_confirm')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -260,23 +260,23 @@ class ArtistVendor
                 </p>
 
                 <p>
-                    <label for="artist_first_name"><?php _e('First Name', 'tipping-addons-jetengine'); ?></label>
+                    <label for="artist_first_name"><?php _e('First Name', 'paper-tipping-addons'); ?></label>
                     <input type="text" name="artist_first_name" id="artist_first_name" placeholder="Your first name" />
                 </p>
 
                 <p>
-                    <label for="artist_last_name"><?php _e('Last Name', 'tipping-addons-jetengine'); ?></label>
+                    <label for="artist_last_name"><?php _e('Last Name', 'paper-tipping-addons'); ?></label>
                     <input type="text" name="artist_last_name" id="artist_last_name" placeholder="Your last name" />
                 </p>
 
                 <p class="form-submit">
                     <input type="hidden" name="action" value="register_artist" />
                     <input type="hidden" name="artist_nonce" value="<?php echo wp_create_nonce('artist_registration_nonce'); ?>" />
-                    <button type="submit" class="register-button"><?php _e('Register', 'tipping-addons-jetengine'); ?></button>
+                    <button type="submit" class="register-button"><?php _e('Register', 'paper-tipping-addons'); ?></button>
                 </p>
 
                 <!-- <div class="social-login-divider">
-                    <span><?php _e('Or register with', 'tipping-addons-jetengine'); ?></span>
+                    <span><?php _e('Or register with', 'paper-tipping-addons'); ?></span>
                 </div>
 
                 <div class="social-login-buttons">
@@ -284,25 +284,25 @@ class ArtistVendor
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                             <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z" fill="#4285F4" />
                         </svg>
-                        <?php _e('Google', 'tipping-addons-jetengine'); ?>
+                        <?php _e('Google', 'paper-tipping-addons'); ?>
                     </button>
                     <button type="button" class="social-login-button facebook-login">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                             <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" fill="#1877F2" />
                         </svg>
-                        <?php _e('Facebook', 'tipping-addons-jetengine'); ?>
+                        <?php _e('Facebook', 'paper-tipping-addons'); ?>
                     </button>
                     <button type="button" class="social-login-button apple-login">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                             <path d="M22 17.607c-.786 2.28-3.139 6.317-5.563 6.361-1.608.031-2.125-.953-3.963-.953-1.837 0-2.412.923-3.932.983-2.572.099-6.542-5.827-6.542-10.995 0-4.747 3.308-7.1 6.198-7.143 1.55-.028 3.014 1.045 3.959 1.045.949 0 2.727-1.29 4.596-1.101.782.033 2.979.315 4.389 2.377-3.741 2.442-3.158 7.549.858 9.426zm-5.222-17.607c-2.826.114-5.132 3.079-4.81 5.531 2.612.203 5.118-2.725 4.81-5.531z" />
                         </svg>
-                        <?php _e('Apple', 'tipping-addons-jetengine'); ?>
+                        <?php _e('Apple', 'paper-tipping-addons'); ?>
                     </button>
                 </div> -->
 
                 <p class="login-link">
-                    <?php _e('Already have an account?', 'tipping-addons-jetengine'); ?>
-                    <a href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>"><?php _e('Log in', 'tipping-addons-jetengine'); ?></a>
+                    <?php _e('Already have an account?', 'paper-tipping-addons'); ?>
+                    <a href="<?php echo esc_url(wc_get_page_permalink('myaccount')); ?>"><?php _e('Log in', 'paper-tipping-addons'); ?></a>
                 </p>
             </form>
         </div>
@@ -325,7 +325,7 @@ class ArtistVendor
     {
         // Verify nonce
         if (!isset($_POST['artist_nonce']) || !wp_verify_nonce($_POST['artist_nonce'], 'artist_registration_nonce')) {
-            wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Security check failed', 'paper-tipping-addons')]);
         }
 
         // Validate required fields
@@ -335,20 +335,20 @@ class ArtistVendor
         $password_confirm = $_POST['artist_password_confirm'];
 
         if (empty($username) || empty($email) || empty($password)) {
-            wp_send_json_error(['message' => __('Please fill all required fields', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Please fill all required fields', 'paper-tipping-addons')]);
         }
 
         if ($password !== $password_confirm) {
-            wp_send_json_error(['message' => __('Passwords do not match', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Passwords do not match', 'paper-tipping-addons')]);
         }
 
         // Check if username or email already exists
         if (username_exists($username)) {
-            wp_send_json_error(['message' => __('Username already exists', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Username already exists', 'paper-tipping-addons')]);
         }
 
         if (email_exists($email)) {
-            wp_send_json_error(['message' => __('Email already exists', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Email already exists', 'paper-tipping-addons')]);
         }
 
         // Create the user
@@ -376,7 +376,7 @@ class ArtistVendor
         wp_set_auth_cookie($user_id);
 
         wp_send_json_success([
-            'message' => __('Registration successful! Redirecting...', 'tipping-addons-jetengine'),
+            'message' => __('Registration successful! Redirecting...', 'paper-tipping-addons'),
             'redirect' => wc_get_page_permalink('myaccount')
         ]);
     }
@@ -401,8 +401,8 @@ class ArtistVendor
         $product_ids = wp_list_pluck($products, 'ID');
 
         if (empty($product_ids)) {
-            echo '<p>' . __('You haven\'t created any songs yet.', 'tipping-addons-jetengine') . '</p>';
-            echo '<p><a href="' . wc_get_account_endpoint_url('add-song') . '" class="button">' . __('Add Your First Product', 'tipping-addons-jetengine') . '</a></p>';
+            echo '<p>' . __('You haven\'t created any songs yet.', 'paper-tipping-addons') . '</p>';
+            echo '<p><a href="' . wc_get_account_endpoint_url('add-song') . '" class="button">' . __('Add Your First Product', 'paper-tipping-addons') . '</a></p>';
             return;
         }
 
@@ -443,7 +443,7 @@ class ArtistVendor
         if ($total_sales > 0) {
             ?>
             <div class="tips-summary">
-                <p class="total-tips"><?php printf(__('Total Tips: %s', 'tipping-addons-jetengine'), wc_price($total_sales)); ?></p>
+                <p class="total-tips"><?php printf(__('Total Tips: %s', 'paper-tipping-addons'), wc_price($total_sales)); ?></p>
                 
                 <?php
                     // Include withdrawal template using singleton instance
@@ -471,7 +471,7 @@ class ArtistVendor
                     </div>
                 <?php endforeach;
             } else { ?>
-                <p><?php _e('No tips data available yet.', 'tipping-addons-jetengine'); ?></p>
+                <p><?php _e('No tips data available yet.', 'paper-tipping-addons'); ?></p>
             <?php } ?>
         </div>
     <?php
@@ -485,7 +485,7 @@ class ArtistVendor
             !wp_verify_nonce($_POST['product_nonce'], 'update_artist_product_nonce') ||
             !is_user_logged_in()
         ) {
-            wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Security check failed', 'paper-tipping-addons')]);
         }
 
         $product_id = intval($_POST['product_id']);
@@ -493,7 +493,7 @@ class ArtistVendor
         $product_post = get_post($product_id);
 
         if (!$product || $product_post->post_author != get_current_user_id()) {
-            wp_send_json_error(['message' => __('You do not have permission to edit this product', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('You do not have permission to edit this product', 'paper-tipping-addons')]);
         }
 
         // Update basic product data
@@ -501,7 +501,7 @@ class ArtistVendor
         $description = wp_kses_post($_POST['product_description']);
 
         if (empty($name) || empty($description)) {
-            wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'paper-tipping-addons')]);
         }
 
         $product->set_name($name);
@@ -569,7 +569,7 @@ class ArtistVendor
         $product->save();
 
         wp_send_json_success([
-            'message' => __('Product updated successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
+            'message' => __('Product updated successfully! It will be reviewed by an admin before publishing.', 'paper-tipping-addons'),
             'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
     }
@@ -622,7 +622,7 @@ class ArtistVendor
 
         // Check if file exists
         if (empty($_FILES[$file_key]['name'])) {
-            return new WP_Error('missing_file', __('No file was uploaded.', 'tipping-addons-jetengine'));
+            return new WP_Error('missing_file', __('No file was uploaded.', 'paper-tipping-addons'));
         }
 
         // Check file type
@@ -633,7 +633,7 @@ class ArtistVendor
         ];
 
         if (!in_array($file_type['type'], $allowed_types)) {
-            return new WP_Error('invalid_file_type', __('Invalid file type. Only MP3 and WAV files are allowed.', 'tipping-addons-jetengine'));
+            return new WP_Error('invalid_file_type', __('Invalid file type. Only MP3 and WAV files are allowed.', 'paper-tipping-addons'));
         }
 
         // Upload the file
@@ -654,7 +654,7 @@ class ArtistVendor
 
         // Check if file exists
         if (empty($_FILES[$file_key]['name'])) {
-            return new WP_Error('missing_file', __('No image was uploaded.', 'tipping-addons-jetengine'));
+            return new WP_Error('missing_file', __('No image was uploaded.', 'paper-tipping-addons'));
         }
 
         // Check file type
@@ -662,7 +662,7 @@ class ArtistVendor
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
 
         if (!in_array($file_type['type'], $allowed_types)) {
-            return new WP_Error('invalid_file_type', __('Invalid file type. Only JPG, PNG and GIF images are allowed.', 'tipping-addons-jetengine'));
+            return new WP_Error('invalid_file_type', __('Invalid file type. Only JPG, PNG and GIF images are allowed.', 'paper-tipping-addons'));
         }
 
         // Upload the file
@@ -701,8 +701,8 @@ class ArtistVendor
     {
     ?>
         <p class="signup-prompt">
-            <?php _e('New to Musicbae? ', 'tipping-addons-jetengine'); ?>
-            <a href="<?php echo esc_url(site_url('/artist-registration/')); ?>"><?php _e('Sign up', 'tipping-addons-jetengine'); ?></a>
+            <?php _e('New to Musicbae? ', 'paper-tipping-addons'); ?>
+            <a href="<?php echo esc_url(site_url('/artist-registration/')); ?>"><?php _e('Sign up', 'paper-tipping-addons'); ?></a>
         </p>
     <?php
     }
@@ -725,13 +725,13 @@ class ArtistVendor
     ?>
 
         <div class="artist-profile-wrapper">
-            <h2><?php _e('Artist Profile Settings', 'tipping-addons-jetengine'); ?></h2>
+            <h2><?php _e('Artist Profile Settings', 'paper-tipping-addons'); ?></h2>
 
             <form id="artist-profile-form" method="post" enctype="multipart/form-data">
                 <div class="form-message"></div>
 
                 <div class="profile-image-section">
-                    <label><?php _e('Profile Picture', 'tipping-addons-jetengine'); ?></label>
+                    <label><?php _e('Profile Picture', 'paper-tipping-addons'); ?></label>
                     <div class="current-profile-image">
                         <?php if ($profile_image_id) :
                             echo wp_get_attachment_image($profile_image_id, 'thumbnail');
@@ -745,51 +745,51 @@ class ArtistVendor
                         <?php endif; ?>
                     </div>
                     <input type="file" name="profile_image" id="profile_image" accept="image/*" />
-                    <small><?php _e('Recommended size: 300x300 pixels', 'tipping-addons-jetengine'); ?></small>
+                    <small><?php _e('Recommended size: 300x300 pixels', 'paper-tipping-addons'); ?></small>
                 </div>
 
                 <p>
-                    <label for="first_name"><?php _e('First Name', 'tipping-addons-jetengine'); ?></label>
+                    <label for="first_name"><?php _e('First Name', 'paper-tipping-addons'); ?></label>
                     <input type="text"
                         name="first_name"
                         id="first_name"
                         value="<?php echo esc_attr($first_name); ?>"
-                        placeholder="<?php _e('Enter your first name', 'tipping-addons-jetengine'); ?>" />
+                        placeholder="<?php _e('Enter your first name', 'paper-tipping-addons'); ?>" />
                 </p>
 
                 <p>
-                    <label for="last_name"><?php _e('Last Name', 'tipping-addons-jetengine'); ?></label>
+                    <label for="last_name"><?php _e('Last Name', 'paper-tipping-addons'); ?></label>
                     <input type="text"
                         name="last_name"
                         id="last_name"
                         value="<?php echo esc_attr($last_name); ?>"
-                        placeholder="<?php _e('Enter your last name', 'tipping-addons-jetengine'); ?>" />
+                        placeholder="<?php _e('Enter your last name', 'paper-tipping-addons'); ?>" />
                 </p>
 
                 <p>
-                    <label for="display_name"><?php _e('Display Name', 'tipping-addons-jetengine'); ?></label>
+                    <label for="display_name"><?php _e('Display Name', 'paper-tipping-addons'); ?></label>
                     <input type="text"
                         name="display_name"
                         id="display_name"
                         value="<?php echo esc_attr($display_name); ?>"
                         readonly
                         disabled />
-                    <small><?php _e('This is how your name will appear publicly. You can change your display name from account details tab', 'tipping-addons-jetengine'); ?></small>
+                    <small><?php _e('This is how your name will appear publicly. You can change your display name from account details tab', 'paper-tipping-addons'); ?></small>
                 </p>
 
                 <p>
-                    <label for="artist_bio"><?php _e('Bio', 'tipping-addons-jetengine'); ?></label>
+                    <label for="artist_bio"><?php _e('Bio', 'paper-tipping-addons'); ?></label>
                     <textarea name="artist_bio"
                         id="artist_bio"
                         rows="5"
-                        placeholder="<?php _e('Tell your fans about yourself', 'tipping-addons-jetengine'); ?>"><?php echo esc_textarea($artist_bio); ?></textarea>
-                    <small><?php _e('Write a short bio to introduce yourself to your fans', 'tipping-addons-jetengine'); ?></small>
+                        placeholder="<?php _e('Tell your fans about yourself', 'paper-tipping-addons'); ?>"><?php echo esc_textarea($artist_bio); ?></textarea>
+                    <small><?php _e('Write a short bio to introduce yourself to your fans', 'paper-tipping-addons'); ?></small>
                 </p>
 
                 <p>
                     <input type="hidden" name="action" value="update_artist_profile" />
                     <input type="hidden" name="profile_nonce" value="<?php echo wp_create_nonce('update_artist_profile_nonce'); ?>" />
-                    <button type="submit" class="button"><?php _e('Save Changes', 'tipping-addons-jetengine'); ?></button>
+                    <button type="submit" class="button"><?php _e('Save Changes', 'paper-tipping-addons'); ?></button>
                 </p>
             </form>
 
@@ -834,7 +834,7 @@ class ArtistVendor
             !wp_verify_nonce($_POST['profile_nonce'], 'update_artist_profile_nonce') ||
             !is_user_logged_in()
         ) {
-            wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Security check failed', 'paper-tipping-addons')]);
         }
 
         $user_id = get_current_user_id();
@@ -878,7 +878,7 @@ class ArtistVendor
         update_user_meta($user_id, 'last_name', sanitize_text_field($_POST['last_name']));
 
         wp_send_json_success([
-            'message' => __('Profile updated successfully!', 'tipping-addons-jetengine'),
+            'message' => __('Profile updated successfully!', 'paper-tipping-addons'),
             'reload' => true
         ]);
     }

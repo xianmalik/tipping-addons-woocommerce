@@ -68,10 +68,10 @@ class ArtistWithdrawal {
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'withdrawal_nonce' => wp_create_nonce('artist_withdrawal_nonce'),
                 'i18n' => [
-                    'withdrawal_title' => __('Withdraw Funds', 'tipping-addons-jetengine'),
-                    'amount' => __('Amount', 'tipping-addons-jetengine'),
-                    'paypal_email' => __('PayPal Email', 'tipping-addons-jetengine'),
-                    'withdraw' => __('Process Withdrawal', 'tipping-addons-jetengine')
+                    'withdrawal_title' => __('Withdraw Funds', 'paper-tipping-addons'),
+                    'amount' => __('Amount', 'paper-tipping-addons'),
+                    'paypal_email' => __('PayPal Email', 'paper-tipping-addons'),
+                    'withdraw' => __('Process Withdrawal', 'paper-tipping-addons')
                 ]
             ]);
         }
@@ -83,7 +83,7 @@ class ArtistWithdrawal {
             !wp_verify_nonce($_POST['withdrawal_nonce'], 'artist_withdrawal_nonce') || 
             !is_user_logged_in()
         ) {
-            wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Security check failed', 'paper-tipping-addons')]);
         }
 
         $user_id = get_current_user_id();
@@ -92,7 +92,7 @@ class ArtistWithdrawal {
 
         // Validate withdrawal amount
         if ($amount < 10) {
-            wp_send_json_error(['message' => __('Minimum withdrawal amount is $10', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Minimum withdrawal amount is $10', 'paper-tipping-addons')]);
         }
 
         // Get current balance
@@ -112,7 +112,7 @@ class ArtistWithdrawal {
         $available_balance = $total_sales - $total_withdrawn;
 
         if ($amount > $available_balance) {
-            wp_send_json_error(['message' => __('Insufficient balance', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Insufficient balance', 'paper-tipping-addons')]);
         }
 
         // Process PayPal payment
@@ -138,7 +138,7 @@ class ArtistWithdrawal {
             $result = $paypal->process_payout(
                 $paypal_email,
                 $amount,
-                sprintf(__('Withdrawal of %s from your artist earnings', 'tipping-addons-jetengine'), 
+                sprintf(__('Withdrawal of %s from your artist earnings', 'paper-tipping-addons'), 
                     wc_price($amount)
                 )
             );
@@ -149,7 +149,7 @@ class ArtistWithdrawal {
                 update_user_meta($user_id, 'artist_withdrawal_history', $withdrawal_history);
 
                 wp_send_json_success([
-                    'message' => __('Withdrawal processed successfully!', 'tipping-addons-jetengine'),
+                    'message' => __('Withdrawal processed successfully!', 'paper-tipping-addons'),
                     'new_balance' => wc_price($available_balance - $amount)
                 ]);
             }
@@ -158,7 +158,7 @@ class ArtistWithdrawal {
             update_user_meta($user_id, 'artist_withdrawal_history', $withdrawal_history);
             
             wp_send_json_error([
-                'message' => __('Withdrawal failed. Please try again.', 'tipping-addons-jetengine')
+                'message' => __('Withdrawal failed. Please try again.', 'paper-tipping-addons')
             ]);
         }
     }
@@ -196,11 +196,11 @@ class ArtistWithdrawal {
         <div class="artist-withdrawal-wrapper">
             <div class="balance-info">
                 <p class="available-balance">
-                    <?php printf(__('Available Balance: %s', 'tipping-addons-jetengine'), wc_price($available_balance)); ?>
+                    <?php printf(__('Available Balance: %s', 'paper-tipping-addons'), wc_price($available_balance)); ?>
                 </p>
                 <?php if ($available_balance < 10) : ?>
                     <p class="minimum-balance-notice">
-                        <?php _e('You need a minimum balance of $10 to make a withdrawal.', 'tipping-addons-jetengine'); ?>
+                        <?php _e('You need a minimum balance of $10 to make a withdrawal.', 'paper-tipping-addons'); ?>
                     </p>
                 <?php endif; ?>
             </div>
@@ -209,20 +209,20 @@ class ArtistWithdrawal {
                 <button class="withdraw-money-btn button" 
                     data-balance="<?php echo esc_attr($available_balance); ?>"
                     data-email="<?php echo esc_attr($paypal_email); ?>">
-                    <?php _e('Withdraw Funds', 'tipping-addons-jetengine'); ?>
+                    <?php _e('Withdraw Funds', 'paper-tipping-addons'); ?>
                 </button>
             <?php endif; ?>
 
             <?php if (!empty($withdrawal_history) && is_array($withdrawal_history)) : ?>
                 <div class="withdrawal-history">
-                    <h3><?php _e('Withdrawal History', 'tipping-addons-jetengine'); ?></h3>
+                    <h3><?php _e('Withdrawal History', 'paper-tipping-addons'); ?></h3>
                     <table>
                         <thead>
                             <tr>
-                                <th><?php _e('Date', 'tipping-addons-jetengine'); ?></th>
-                                <th><?php _e('Amount', 'tipping-addons-jetengine'); ?></th>
-                                <th><?php _e('PayPal Email', 'tipping-addons-jetengine'); ?></th>
-                                <th><?php _e('Status', 'tipping-addons-jetengine'); ?></th>
+                                <th><?php _e('Date', 'paper-tipping-addons'); ?></th>
+                                <th><?php _e('Amount', 'paper-tipping-addons'); ?></th>
+                                <th><?php _e('PayPal Email', 'paper-tipping-addons'); ?></th>
+                                <th><?php _e('Status', 'paper-tipping-addons'); ?></th>
                             </tr>
                         </thead>
                         <tbody>

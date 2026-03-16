@@ -49,7 +49,7 @@ class PayPalIntegration {
         if (!$access_token) {
             return [
                 'success' => false,
-                'message' => __('Failed to authenticate with PayPal', 'tipping-addons-jetengine')
+                'message' => __('Failed to authenticate with PayPal', 'paper-tipping-addons')
             ];
         }
 
@@ -60,8 +60,8 @@ class PayPalIntegration {
         $body = [
             'sender_batch_header' => [
                 'sender_batch_id' => uniqid('payout_batch_'),
-                'email_subject' => __('You have received a payout!', 'tipping-addons-jetengine'),
-                'email_message' => $note ?: __('You have received a payout from your artist earnings.', 'tipping-addons-jetengine')
+                'email_subject' => __('You have received a payout!', 'paper-tipping-addons'),
+                'email_message' => $note ?: __('You have received a payout from your artist earnings.', 'paper-tipping-addons')
             ],
             'items' => [
                 [
@@ -104,7 +104,7 @@ class PayPalIntegration {
 
         return [
             'success' => false,
-            'message' => isset($body->message) ? $body->message : __('Unknown error occurred', 'tipping-addons-jetengine')
+            'message' => isset($body->message) ? $body->message : __('Unknown error occurred', 'paper-tipping-addons')
         ];
     }
 

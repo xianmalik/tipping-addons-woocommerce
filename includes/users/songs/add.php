@@ -16,7 +16,7 @@ class AddProductHandler
         $max_songs = 5;
 
         if ($song_count >= $max_songs) {
-            wc_add_notice(__('You have reached the maximum number of songs allowed.', 'tipping-addons-jetengine'), 'error');
+            wc_add_notice(__('You have reached the maximum number of songs allowed.', 'paper-tipping-addons'), 'error');
             wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
@@ -42,43 +42,43 @@ class AddProductHandler
     {
 ?>
         <div class="add-product-form">
-            <h2><?php _e('Add New Song', 'tipping-addons-jetengine'); ?></h2>
+            <h2><?php _e('Add New Song', 'paper-tipping-addons'); ?></h2>
 
             <form id="add-artist-product-form" method="post" enctype="multipart/form-data" action="">
                 <div class="form-row">
-                    <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="product_name"><?php _e('Song Title', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="text" name="product_name" id="product_name" required />
                 </div>
 
                 <div class="form-row">
-                    <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?></label>
+                    <label for="product_description"><?php _e('Description', 'paper-tipping-addons'); ?></label>
                     <textarea name="product_description" id="product_description" rows="5"></textarea>
                 </div>
 
                 <div class="form-row">
-                    <label for="product_image"><?php _e('Song Cover Image', 'tipping-addons-jetengine'); ?></label>
+                    <label for="product_image"><?php _e('Song Cover Image', 'paper-tipping-addons'); ?></label>
                     <input type="file" name="product_image" id="product_image" accept="image/*" />
                 </div>
 
                 <div class="form-row">
-                    <label for="product_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="product_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="file" name="product_preview" id="product_preview" accept=".mp3,.wav,.ogg,.m4a,.aac,.flac" required />
                 </div>
 
                 <div class="form-row">
-                    <label for="product_mp3"><?php _e('Full Song (MP3)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="product_mp3"><?php _e('Full Song (MP3)', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="file" name="product_mp3" id="product_mp3" accept=".mp3" required />
                 </div>
 
                 <div class="form-row">
-                    <label for="product_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?></label>
+                    <label for="product_wav"><?php _e('Full Song (WAV)', 'paper-tipping-addons'); ?></label>
                     <input type="file" name="product_wav" id="product_wav" accept=".wav" />
                 </div>
 
                 <div class="form-submit">
                     <input type="hidden" name="action" value="submit_artist_product" />
                     <?php wp_nonce_field('submit_artist_product_nonce', 'product_nonce'); ?>
-                    <button type="submit" class="button"><?php _e('Upload', 'tipping-addons-jetengine'); ?></button>
+                    <button type="submit" class="button"><?php _e('Upload', 'paper-tipping-addons'); ?></button>
                 </div>
             </form>
         </div>
@@ -94,9 +94,9 @@ class AddProductHandler
             !is_user_logged_in()
         ) {
             if (defined('DOING_AJAX') && DOING_AJAX) {
-                wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+                wp_send_json_error(['message' => __('Security check failed', 'paper-tipping-addons')]);
             } else {
-                wc_add_notice(__('Security check failed', 'tipping-addons-jetengine'), 'error');
+                wc_add_notice(__('Security check failed', 'paper-tipping-addons'), 'error');
                 wp_redirect(wc_get_account_endpoint_url('manage-songs'));
                 exit;
             }
@@ -109,9 +109,9 @@ class AddProductHandler
         // Check if artist has reached the song limit
         if ($song_count >= $max_songs) {
             if (defined('DOING_AJAX') && DOING_AJAX) {
-                wp_send_json_error(['message' => __('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine')]);
+                wp_send_json_error(['message' => __('You have reached the maximum limit of 5 songs.', 'paper-tipping-addons')]);
             } else {
-                wc_add_notice(__('You have reached the maximum limit of 5 songs.', 'tipping-addons-jetengine'), 'error');
+                wc_add_notice(__('You have reached the maximum limit of 5 songs.', 'paper-tipping-addons'), 'error');
                 wp_redirect(wc_get_account_endpoint_url('manage-songs'));
                 exit;
             }
@@ -123,9 +123,9 @@ class AddProductHandler
 
         if (empty($name)) {
             if (defined('DOING_AJAX') && DOING_AJAX) {
-                wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'tipping-addons-jetengine')]);
+                wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'paper-tipping-addons')]);
             } else {
-                wc_add_notice(__('Please fill all required fields with valid values', 'tipping-addons-jetengine'), 'error');
+                wc_add_notice(__('Please fill all required fields with valid values', 'paper-tipping-addons'), 'error');
                 wp_redirect(wc_get_account_endpoint_url('add-song'));
                 exit;
             }
@@ -134,9 +134,9 @@ class AddProductHandler
         // Validate required file uploads
         if (empty($_FILES['product_preview']['name']) || empty($_FILES['product_mp3']['name'])) {
             if (defined('DOING_AJAX') && DOING_AJAX) {
-                wp_send_json_error(['message' => __('Please upload both preview audio and full song MP3 files', 'tipping-addons-jetengine')]);
+                wp_send_json_error(['message' => __('Please upload both preview audio and full song MP3 files', 'paper-tipping-addons')]);
             } else {
-                wc_add_notice(__('Please upload both preview audio and full song MP3 files', 'tipping-addons-jetengine'), 'error');
+                wc_add_notice(__('Please upload both preview audio and full song MP3 files', 'paper-tipping-addons'), 'error');
                 wp_redirect(wc_get_account_endpoint_url('add-song'));
                 exit;
             }
@@ -145,9 +145,9 @@ class AddProductHandler
         // Validate file uploads are not empty
         if ($_FILES['product_preview']['error'] !== UPLOAD_ERR_OK || $_FILES['product_mp3']['error'] !== UPLOAD_ERR_OK) {
             if (defined('DOING_AJAX') && DOING_AJAX) {
-                wp_send_json_error(['message' => __('There was an error uploading your files. Please try again.', 'tipping-addons-jetengine')]);
+                wp_send_json_error(['message' => __('There was an error uploading your files. Please try again.', 'paper-tipping-addons')]);
             } else {
-                wc_add_notice(__('There was an error uploading your files. Please try again.', 'tipping-addons-jetengine'), 'error');
+                wc_add_notice(__('There was an error uploading your files. Please try again.', 'paper-tipping-addons'), 'error');
                 wp_redirect(wc_get_account_endpoint_url('add-song'));
                 exit;
             }
@@ -156,9 +156,9 @@ class AddProductHandler
         // Check if WooCommerce is active
         if (!class_exists('WC_Product_Simple')) {
             if (defined('DOING_AJAX') && DOING_AJAX) {
-                wp_send_json_error(['message' => __('WooCommerce is required to create products', 'tipping-addons-jetengine')]);
+                wp_send_json_error(['message' => __('WooCommerce is required to create products', 'paper-tipping-addons')]);
             } else {
-                wc_add_notice(__('WooCommerce is required to create products', 'tipping-addons-jetengine'), 'error');
+                wc_add_notice(__('WooCommerce is required to create products', 'paper-tipping-addons'), 'error');
                 wp_redirect(wc_get_account_endpoint_url('add-song'));
                 exit;
             }
@@ -272,12 +272,12 @@ class AddProductHandler
         // Handle success response
         if (defined('DOING_AJAX') && DOING_AJAX) {
             wp_send_json_success([
-                'message' => __('Song added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
+                'message' => __('Song added successfully! It will be reviewed by an admin before publishing.', 'paper-tipping-addons'),
                 'redirect' => wc_get_account_endpoint_url('manage-songs')
             ]);
         } else {
             // Add success notice and redirect
-            wc_add_notice(__('Song added successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'), 'success');
+            wc_add_notice(__('Song added successfully! It will be reviewed by an admin before publishing.', 'paper-tipping-addons'), 'success');
             wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }

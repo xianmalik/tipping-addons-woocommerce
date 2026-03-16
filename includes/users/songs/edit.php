@@ -14,7 +14,7 @@ class EditProductHandler {
         $product_post = get_post($product_id);
 
         if (!$product || $product_post->post_author != get_current_user_id()) {
-            wc_add_notice(__('You do not have permission to edit this product.', 'tipping-addons-jetengine'), 'error');
+            wc_add_notice(__('You do not have permission to edit this product.', 'paper-tipping-addons'), 'error');
       wp_redirect(wc_get_account_endpoint_url('manage-songs'));
             exit;
         }
@@ -26,23 +26,23 @@ class EditProductHandler {
     private function render_edit_form($product) {
         ?>
         <div class="edit-product-form">
-            <h2><?php _e('Edit Song', 'tipping-addons-jetengine'); ?></h2>
+            <h2><?php _e('Edit Song', 'paper-tipping-addons'); ?></h2>
             
             <form id="edit-artist-product-form" method="post" enctype="multipart/form-data">
                 <div class="form-message"></div>
                 
                 <div class="form-row">
-                    <label for="product_name"><?php _e('Song Title', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="product_name"><?php _e('Song Title', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <input type="text" name="product_name" id="product_name" value="<?php echo esc_attr($product->get_name()); ?>" required />
                 </div>
 
                 <div class="form-row">
-                    <label for="product_description"><?php _e('Description', 'tipping-addons-jetengine'); ?></label>
+                    <label for="product_description"><?php _e('Description', 'paper-tipping-addons'); ?></label>
                     <textarea name="product_description" id="product_description" rows="5"><?php echo esc_textarea($product->get_description()); ?></textarea>
                 </div>
 
                 <div class="form-row">
-                    <label for="product_image"><?php _e('Song Cover Image', 'tipping-addons-jetengine'); ?></label>
+                    <label for="product_image"><?php _e('Song Cover Image', 'paper-tipping-addons'); ?></label>
                     <?php if ($product->get_image_id()): ?>
                         <div class="current-image">
                             <?php echo $product->get_image('thumbnail'); ?>
@@ -52,12 +52,12 @@ class EditProductHandler {
                 </div>
 
                 <div class="form-row">
-                    <label for="product_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'tipping-addons-jetengine'); ?> <span class="required">*</span></label>
+                    <label for="product_preview"><?php _e('Preview Audio (recommend duration ~ 30s)', 'paper-tipping-addons'); ?> <span class="required">*</span></label>
                     <?php 
                     $preview_id = get_post_meta($product->get_id(), 'song_preview', true);
                     if ($preview_id): 
                         $preview_file = get_attached_file($preview_id);
-                        $preview_filename = $preview_file ? basename($preview_file) : __('Preview file', 'tipping-addons-jetengine');
+                        $preview_filename = $preview_file ? basename($preview_file) : __('Preview file', 'paper-tipping-addons');
                     ?>
                         <div class="current-file">
                             <span class="file-name"><?php echo esc_html($preview_filename); ?></span>
@@ -67,12 +67,12 @@ class EditProductHandler {
                 </div>
 
                 <div class="form-row">
-                    <label for="product_mp3"><?php _e('Full Song (MP3)', 'tipping-addons-jetengine'); ?></label>
+                    <label for="product_mp3"><?php _e('Full Song (MP3)', 'paper-tipping-addons'); ?></label>
                     <?php 
                     $mp3_id = get_post_meta($product->get_id(), 'song_mp3', true);
                     if ($mp3_id): 
                         $mp3_file = get_attached_file($mp3_id);
-                        $mp3_filename = $mp3_file ? basename($mp3_file) : __('MP3 file', 'tipping-addons-jetengine');
+                        $mp3_filename = $mp3_file ? basename($mp3_file) : __('MP3 file', 'paper-tipping-addons');
                     ?>
                         <div class="current-file">
                             <span class="file-name"><?php echo esc_html($mp3_filename); ?></span>
@@ -82,13 +82,13 @@ class EditProductHandler {
                 </div>
 
                 <div class="form-row">
-                    <label for="product_wav"><?php _e('Full Song (WAV)', 'tipping-addons-jetengine'); ?></label>
+                    <label for="product_wav"><?php _e('Full Song (WAV)', 'paper-tipping-addons'); ?></label>
                     <?php 
                     $wav_id = get_post_meta($product->get_id(), 'song_wav', true);
                     $wav_filename = '';
                     if ($wav_id): 
                         $wav_file = get_attached_file($wav_id);
-                        $wav_filename = $wav_file ? basename($wav_file) : __('WAV file', 'tipping-addons-jetengine');
+                        $wav_filename = $wav_file ? basename($wav_file) : __('WAV file', 'paper-tipping-addons');
                     ?>
                         <div class="current-file">
                             <span class="file-name"><?php echo esc_html($wav_filename); ?></span>
@@ -101,7 +101,7 @@ class EditProductHandler {
                     <input type="hidden" name="action" value="update_artist_product" />
                     <input type="hidden" name="product_id" value="<?php echo esc_attr($product->get_id()); ?>" />
                     <?php wp_nonce_field('update_artist_product_nonce', 'product_nonce'); ?>
-                    <button type="submit" class="button"><?php _e('Update Song', 'tipping-addons-jetengine'); ?></button>
+                    <button type="submit" class="button"><?php _e('Update Song', 'paper-tipping-addons'); ?></button>
                 </div>
             </form>
         </div>
@@ -115,7 +115,7 @@ class EditProductHandler {
             !wp_verify_nonce($_POST['product_nonce'], 'update_artist_product_nonce') ||
             !is_user_logged_in()
         ) {
-            wp_send_json_error(['message' => __('Security check failed', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Security check failed', 'paper-tipping-addons')]);
         }
 
         $product_id = intval($_POST['product_id']);
@@ -123,7 +123,7 @@ class EditProductHandler {
         $product_post = get_post($product_id);
 
         if (!$product || $product_post->post_author != get_current_user_id()) {
-            wp_send_json_error(['message' => __('You do not have permission to edit this product', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('You do not have permission to edit this product', 'paper-tipping-addons')]);
         }
 
         // Update basic product data
@@ -131,7 +131,7 @@ class EditProductHandler {
         $description = wp_kses_post($_POST['product_description']);
 
         if (empty($name) || empty($description)) {
-            wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'tipping-addons-jetengine')]);
+            wp_send_json_error(['message' => __('Please fill all required fields with valid values', 'paper-tipping-addons')]);
         }
 
         $product->set_name($name);
@@ -199,7 +199,7 @@ class EditProductHandler {
         $product->save();
 
         wp_send_json_success([
-            'message' => __('Product updated successfully! It will be reviewed by an admin before publishing.', 'tipping-addons-jetengine'),
+            'message' => __('Product updated successfully! It will be reviewed by an admin before publishing.', 'paper-tipping-addons'),
             'redirect' => wc_get_account_endpoint_url('manage-songs')
         ]);
     }

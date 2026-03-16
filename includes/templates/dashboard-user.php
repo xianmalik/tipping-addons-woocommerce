@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
             <div class="summary-item-icon">
                 <i class="fas fa-coins"></i>
             </div>
-            <h3><?php _e('Songs You Have Tipped', 'tipping-addons-jetengine'); ?></h3>
+            <h3><?php _e('Songs You Have Tipped', 'paper-tipping-addons'); ?></h3>
         </div>
         
         <div style="padding: 0 20px 20px;">
@@ -22,17 +22,17 @@ if (!defined('ABSPATH')) {
                             'You have tipped %d song.',
                             'You have tipped %d songs.',
                             $tip_count,
-                            'tipping-addons-jetengine'
+                            'paper-tipping-addons'
                         ),
                         $tip_count
                     );
                     ?>
                 </p>
                 <a href="<?php echo esc_url(home_url('/my-account/orders/')); ?>" class="button" style="display: inline-block; padding: 5px 0; background-color: transparent; color: #0073aa; text-decoration: none; font-size: 14px; transition: all 0.3s ease;">
-                    <?php _e('Show All Tips', 'tipping-addons-jetengine'); ?> <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                    <?php _e('Show All Tips', 'paper-tipping-addons'); ?> <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
                 </a>
             <?php else : ?>
-                <p style="margin:0;"><?php _e('You haven\'t tipped any songs yet.', 'tipping-addons-jetengine'); ?></p>
+                <p style="margin:0;"><?php _e('You haven\'t tipped any songs yet.', 'paper-tipping-addons'); ?></p>
             <?php endif; ?>
         </div>
     </div>
