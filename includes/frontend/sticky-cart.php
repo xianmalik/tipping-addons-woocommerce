@@ -33,7 +33,7 @@ class StickyCart
     {
         $cart_count = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
         $cart_url   = wc_get_cart_url();
-        $icon_url   = PAPER_TIPPING_URL . 'assets/images/MusicBaeCart.png';
+        $icon_url   = PAPER_TIPPING_URL . 'assets/images/cart-icon.png';
 
         ob_start();
         include PAPER_TIPPING_PATH . 'templates/frontend/sticky-cart.php';
