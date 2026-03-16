@@ -2,15 +2,18 @@
 
 /**
  * Plugin Name: Paper Tipping Addons
- * Description: A tipping system integrated with JetEngine and Elementor
+ * Description: A music artist marketplace and tipping system for WooCommerce.
  * Version: 1.8.5
  * Author: Malik Zubayer
  * Text Domain: paper-tipping-addons
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
+
+define('PAPER_TIPPING_PATH', plugin_dir_path(__FILE__));
+define('PAPER_TIPPING_URL',  plugin_dir_url(__FILE__));
 
 class PaperTippingAddons
 {
@@ -27,51 +30,11 @@ class PaperTippingAddons
     public function __construct()
     {
         add_action('plugins_loaded', [$this, 'init']);
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
-    }
-
-    public function enqueue_styles() {
-        // Enqueue withdrawal.js
-        wp_enqueue_script(
-            'tipping-withdrawal',
-            plugin_dir_url(__FILE__) . 'assets/js/withdrawal.js',
-            ['jquery'],
-            '1.0.0',
-            true
-        );
-
-        // Localize the script with necessary data
-        wp_localize_script('tipping-withdrawal', 'tipping_addons', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'withdrawal_nonce' => wp_create_nonce('artist_withdrawal_nonce'),
-            'i18n' => array(
-                'withdrawal_title' => __('Withdraw Funds', 'paper-tipping-addons'),
-                'amount' => __('Amount', 'paper-tipping-addons'),
-                'paypal_email' => __('PayPal Email', 'paper-tipping-addons'),
-                'withdraw' => __('Process Withdrawal', 'paper-tipping-addons')
-            )
-        ));
-
-        // Enqueue withdrawal-status.js
-        wp_enqueue_script(
-            'tipping-withdrawal-status',
-            plugin_dir_url(__FILE__). 'assets/js/withdrawal-status.js',
-            ['jquery'],
-            '1.0.0',
-            true
-        );
-
-        wp_enqueue_style(
-            'tipping-withdrawal',
-            plugin_dir_url(__FILE__) . 'assets/css/withdrawal.css',
-            [],
-            '1.0.0'
-        );
+        register_activation_hook(__FILE__, [$this, 'plugin_activation']);
     }
 
     public function init()
     {
-        // Check if Elementor and JetEngine are installed and activated
         if (!did_action('elementor/loaded')) {
             add_action('admin_notices', [$this, 'missing_elementor_notice']);
             return;
@@ -87,94 +50,84 @@ class PaperTippingAddons
             return;
         }
 
-        // Initialize plugin components
         $this->init_components();
     }
 
     public function init_components()
     {
-        // Load plugin files
-        require_once plugin_dir_path(__FILE__) . 'includes/functions.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/admin/admin-panel.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/woocommerce/cart-integration.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/frontend/sticky-cart.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/users/artist-vendor.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/integrations/paypal.php';
-        require_once plugin_dir_path(__FILE__) . 'includes/users/withdrawal.php';
+        // Core utilities (loaded first — other modules depend on them)
+        require_once PAPER_TIPPING_PATH . 'includes/core/class-artist-query.php';
+        require_once PAPER_TIPPING_PATH . 'includes/core/class-upload-handler.php';
 
-        // Include the performance fixes
-        require_once plugin_dir_path(__FILE__) . 'includes/admin/performance-fixes.php';
+        // Feature modules
+        require_once PAPER_TIPPING_PATH . 'includes/woocommerce/cart-filters.php';
+        require_once PAPER_TIPPING_PATH . 'includes/woocommerce/cart-integration.php';
+        require_once PAPER_TIPPING_PATH . 'includes/admin/admin-panel.php';
+        require_once PAPER_TIPPING_PATH . 'includes/frontend/sticky-cart.php';
+        require_once PAPER_TIPPING_PATH . 'includes/artist/artist-vendor.php';
+        require_once PAPER_TIPPING_PATH . 'includes/integrations/paypal.php';
+        require_once PAPER_TIPPING_PATH . 'includes/artist/withdrawal.php';
+        require_once PAPER_TIPPING_PATH . 'includes/admin/performance-fixes.php';
 
-        // Ensure artist role exists
+        // Ensure artist role exists at runtime
         $this->ensure_artist_role_exists();
 
-        // Initialize sticky cart
+        // Sticky cart shortcode
         new StickyCart();
 
-        // Load widget after Elementor is fully initialized
+        // Elementor widget (registered after Elementor fully boots)
         add_action('elementor/init', function () {
-            require_once plugin_dir_path(__FILE__) . 'includes/widgets/tip-widget.php';
-            // Register Elementor widget
+            require_once PAPER_TIPPING_PATH . 'includes/frontend/tip-widget.php';
             add_action('elementor/widgets/register', [$this, 'register_widgets']);
         });
 
-        // Initialize admin panel
+        // Admin panel
         if (is_admin()) {
             new TippingAdminPanel();
         }
-        
-        // Register activation hook for database setup
-        register_activation_hook(__FILE__, [$this, 'plugin_activation']);
     }
-    
-    /**
-     * Ensure the artist role exists
-     */
-    public function ensure_artist_role_exists() {
-        // Check if the role already exists
+
+    public function ensure_artist_role_exists()
+    {
         if (!get_role('music_artist_vendor')) {
-            // Create artist role if it doesn't exist
             add_role(
                 'music_artist_vendor',
                 'Music Artist - Vendor',
                 [
-                    'read' => true,
-                    'edit_posts' => false,
+                    'read'         => true,
+                    'edit_posts'   => false,
                     'delete_posts' => false,
-                    'publish_posts' => false,
+                    'publish_posts'=> false,
                     'upload_files' => true,
                 ]
             );
         }
     }
-    
-    public function plugin_activation() {
-        // Create database table for song tips if it doesn't exist
+
+    public function plugin_activation()
+    {
         global $wpdb;
-        
-        $table_name = $wpdb->prefix . 'song_tips';
+
+        $table_name      = $wpdb->prefix . 'song_tips';
         $charset_collate = $wpdb->get_charset_collate();
-        
+
         $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            song_id bigint(20) NOT NULL,
-            tip_amount decimal(10,2) NOT NULL,
-            customer_name varchar(255) NOT NULL,
-            customer_id bigint(20) NOT NULL,
-            order_id bigint(20) NOT NULL,
-            song_mp3 varchar(255) DEFAULT '',
-            song_wav varchar(255) DEFAULT '',
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            id             bigint(20)     NOT NULL AUTO_INCREMENT,
+            song_id        bigint(20)     NOT NULL,
+            tip_amount     decimal(10,2)  NOT NULL,
+            customer_name  varchar(255)   NOT NULL DEFAULT '',
+            customer_id    bigint(20)     NOT NULL DEFAULT 0,
+            order_id       bigint(20)     NOT NULL DEFAULT 0,
+            song_mp3       varchar(255)   NOT NULL DEFAULT '',
+            song_wav       varchar(255)   NOT NULL DEFAULT '',
+            created_at     datetime       DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id)
         ) $charset_collate;";
-        
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta($sql);
-        
-        // Create artist role
+
         $this->ensure_artist_role_exists();
-        
-        // Flush rewrite rules
         flush_rewrite_rules();
     }
 
@@ -185,25 +138,24 @@ class PaperTippingAddons
 
     public function missing_elementor_notice()
     {
-        echo '<div class="notice notice-warning"><p>' .
-            esc_html__('JetEngine Tipping Addons requires Elementor to be installed and activated.', 'paper-tipping-addons') .
-            '</p></div>';
+        echo '<div class="notice notice-warning"><p>'
+            . esc_html__('Paper Tipping Addons requires Elementor to be installed and activated.', 'paper-tipping-addons')
+            . '</p></div>';
     }
 
     public function missing_jetengine_notice()
     {
-        echo '<div class="notice notice-warning"><p>' .
-            esc_html__('JetEngine Tipping Addons requires JetEngine to be installed and activated.', 'paper-tipping-addons') .
-            '</p></div>';
+        echo '<div class="notice notice-warning"><p>'
+            . esc_html__('Paper Tipping Addons requires JetEngine to be installed and activated.', 'paper-tipping-addons')
+            . '</p></div>';
     }
 
     public function missing_woocommerce_notice()
     {
-        echo '<div class="notice notice-warning"><p>' .
-            esc_html__('JetEngine Tipping Addons requires WooCommerce to be installed and activated.', 'paper-tipping-addons') .
-            '</p></div>';
+        echo '<div class="notice notice-warning"><p>'
+            . esc_html__('Paper Tipping Addons requires WooCommerce to be installed and activated.', 'paper-tipping-addons')
+            . '</p></div>';
     }
 }
 
-// Initialize the plugin
 PaperTippingAddons::get_instance();

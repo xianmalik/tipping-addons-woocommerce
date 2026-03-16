@@ -628,7 +628,7 @@
 .woocommerce-account .woocommerce .woocommerce-form-login::before {
     content: '';
     display: block;
-    background-image: url('/wp-content/plugins/tipping-addons-jetengine/includes/assets/logo.webp'); /* Updated to webp format */
+    background-image: url('/wp-content/plugins/tipping-addons-woocommerce/assets/images/logo.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

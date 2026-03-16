@@ -1,0 +1,51 @@
+.delete-product-confirmation {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.product-image img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.warning-text {
+    color: #dc3545;
+    margin-top: 10px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.delete-button {
+    background: #dc3545 !important;
+    color: white !important;
+}
+
+.delete-button:hover {
+    background: #bd2130 !important;
+}
+
+.cancel-button {
+    background: #6c757d !important;
+    color: white !important;
+}
+
+.cancel-button:hover {
+    background: #5a6268 !important;
+}
