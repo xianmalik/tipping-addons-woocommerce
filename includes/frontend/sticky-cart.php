@@ -8,7 +8,7 @@ class StickyCart
     public function __construct()
     {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
-        add_shortcode('musicbae_cart_icon', [$this, 'cart_icon_shortcode']);
+        add_shortcode('paperhouse_cart_icon', [$this, 'cart_icon_shortcode']);
     }
 
     public function enqueue_assets()

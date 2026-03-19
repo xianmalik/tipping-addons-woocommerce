@@ -4,7 +4,8 @@
  * Plugin Name: Paper Tipping Addons
  * Description: A music artist marketplace and tipping system for WooCommerce.
  * Version: 1.8.5
- * Author: Malik Zubayer
+ * Author: Paperhouse
+ * Author URI: https://paperhouse.agency
  * Text Domain: paper-tipping-addons
  */
 

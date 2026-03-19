@@ -341,7 +341,7 @@ class ArtistVendor
     {
         ?>
         <p class="signup-prompt">
-            <?php _e('New to Musicbae? ', 'paper-tipping-addons'); ?>
+            <?php _e('New to Paperhouse? ', 'paper-tipping-addons'); ?>
             <a href="<?php echo esc_url(site_url('/artist-registration/')); ?>"><?php _e('Sign up', 'paper-tipping-addons'); ?></a>
         </p>
         <?php

@@ -1,14 +1,30 @@
-# Paper Tipping Addons
+<p align="center">
+    <h1 align="center">Paper Tipping Addons</h1>
+    <h4 align="center">By: <a href="https://paperhouse.agency">PaperHouse Agency</a></h4>
+</p>
 
-A custom WordPress plugin built for a music artist marketplace. Artists register, upload songs, receive tips from fans, and withdraw earnings via PayPal. Built on top of WooCommerce, JetEngine, and Elementor.
+<p align="center">
+    <img alt="Version" src="https://img.shields.io/badge/Version-1.8.5-9ea1ab?style=for-the-badge&labelColor=3a3a3a&logo=git&logoColor=9EA1AB">
+    <img alt="PHP" src="https://img.shields.io/badge/PHP-WordPress-9ea1ab?style=for-the-badge&labelColor=3a3a3a&logo=php&logoColor=9EA1AB">
+    <img alt="WooCommerce" src="https://img.shields.io/badge/WooCommerce-Integration-9ea1ab?style=for-the-badge&labelColor=3a3a3a&logo=woocommerce&logoColor=9EA1AB">
+</p>
 
-**Version:** 1.8.5
-**Author:** Malik Zubayer
-**Text Domain:** `paper-tipping-addons`
+<p align="center">
+    A music artist marketplace and tipping system for WordPress — built on WooCommerce, JetEngine, and Elementor.
+</p>
 
----
+<p align="center">
+    <a href="https://github.com/xianmalik/tipping-addons-woocommerce">
+        <img alt="Repo Size" src="https://img.shields.io/github/repo-size/xianmalik/tipping-addons-woocommerce?color=%239ea1ab&label=SIZE&logo=square&style=for-the-badge&logoColor=D9E0EE&labelColor=3a3a3a"/></a>
+    <a href="https://github.com/xianmalik/tipping-addons-woocommerce/stargazers">
+        <img alt="Stars" src="https://img.shields.io/github/stars/xianmalik/tipping-addons-woocommerce?style=for-the-badge&logo=starship&color=9ea1ab&logoColor=D9E0EE&labelColor=3a3a3a"></a>
+</p>
 
-## Requirements
+<hr />
+
+<p align="center">
+    <h2 align="center">Requirements</h2>
+</p>
 
 | Dependency | Purpose |
 |---|---|
@@ -17,50 +33,54 @@ A custom WordPress plugin built for a music artist marketplace. Artists register
 | JetEngine | Dynamic content / meta fields |
 | Elementor | Page builder (tip widget) |
 
----
+<p align="center">
+    <h2 align="center">Installation</h2>
+</p>
 
-## Installation
+```bash
+# 1) Copy or symlink the plugin folder into your WordPress install
+cp -r paper-tipping-addons /path/to/wp-content/plugins/
 
-1. Copy or symlink the plugin folder into `wp-content/plugins/paper-tipping-addons/`
-2. Activate from **WordPress Admin → Plugins**
-3. Ensure WooCommerce, JetEngine, and Elementor are installed and active
-4. On activation the plugin creates:
-   - The `music_artist_vendor` user role
-   - The `wp_song_tips` database table
-   - All required WooCommerce account rewrite endpoints
+# 2) Activate from WordPress Admin → Plugins
 
----
+# On activation the plugin automatically creates:
+#   - The music_artist_vendor user role
+#   - The wp_song_tips database table
+#   - All required WooCommerce account rewrite endpoints
+```
 
-## Features
+<p align="center">
+    <h2 align="center">Features</h2>
+</p>
 
-### For Artists
-- **Registration** — dedicated registration form via `[artist_registration_form]` shortcode; users are assigned the `music_artist_vendor` role
+**For Artists**
+- **Registration** — dedicated form via `[artist_registration_form]` shortcode; users assigned the `music_artist_vendor` role
 - **Song Management** — upload up to 5 songs per artist (cover image, preview clip, full MP3, full WAV)
 - **Artist Profile** — bio and profile picture editable from the My Account dashboard
 - **My Tips** — earnings summary per song with total tips received
 - **Withdrawals** — withdraw earnings to a PayPal account (minimum $10); full withdrawal history shown
 
-### For Fans / Customers
+**For Fans / Customers**
 - **Tip Widget** — Elementor widget placed on any song page; fans pick an amount and add it to the WooCommerce cart
-- **Sticky Cart** — floating cart icon shortcode `[musicbae_cart_icon]` that updates live on tip addition
+- **Sticky Cart** — floating cart icon via `[paperhouse_cart_icon]` shortcode that updates live on tip addition
 - **Song Downloads** — purchased/tipped songs available under **My Account → Song Downloads**
 
-### For Admins
+**For Admins**
 - **Song Tips panel** — WP Admin → Song Tips shows every tip with song, amount, customer, and date
-- **PayPal Settings** — Admin → Song Tips → PayPal Settings to configure PayPal OAuth credentials and sandbox mode
+- **PayPal Settings** — Admin → Song Tips → PayPal Settings to configure OAuth credentials and sandbox mode
 
----
-
-## Shortcodes
+<p align="center">
+    <h2 align="center">Shortcodes</h2>
+</p>
 
 | Shortcode | Description |
 |---|---|
 | `[artist_registration_form]` | Renders the artist registration form |
-| `[musicbae_cart_icon]` | Renders the sticky floating cart icon |
+| `[paperhouse_cart_icon]` | Renders the sticky floating cart icon |
 
----
-
-## WooCommerce Account Endpoints
+<p align="center">
+    <h2 align="center">WooCommerce Endpoints</h2>
+</p>
 
 | Endpoint | Description |
 |---|---|
@@ -73,9 +93,9 @@ A custom WordPress plugin built for a music artist marketplace. Artists register
 | `/my-account/artist-withdrawal/` | Withdrawal form |
 | `/my-account/song-downloads/` | Customer download history |
 
----
-
-## Project Structure
+<p align="center">
+    <h2 align="center">Project Structure</h2>
+</p>
 
 ```
 paper-tipping-addons.php        # Plugin entry point — constants, boot, activation hook
@@ -103,53 +123,18 @@ includes/
     cart-filters.php            # Price hooks, cart item meta, order item labels
   integrations/
     paypal.php                  # PayPal OAuth2 + Payouts API
-templates/
-  admin/
-    tips-table.php              # Admin tips list HTML
-    paypal-settings.php         # PayPal settings form HTML
-  artist/
-    registration-form.php       # Artist signup form HTML
-    profile-form.php            # Artist profile settings HTML
-    sales-content.php           # Tips summary HTML
-    withdrawal.php              # Withdrawal widget HTML
-    dashboard-cards.php         # Artist dashboard cards HTML
-    songs/
-      add-form.php              # Add song form HTML
-      edit-form.php             # Edit song form HTML
-      delete-confirm.php        # Delete confirmation HTML
-      manage-songs.php          # Song list HTML
-  customer/
-    dashboard-user.php          # Customer dashboard HTML
-    song-downloads.php          # Customer downloads table HTML
-  frontend/
-    sticky-cart.php             # Cart icon HTML
-    tip-widget.php              # Tip widget HTML
+templates/                      # PHP partials — logic files set vars then include these
 assets/
-  css/
-    artist/                     # Artist-side styles (my-account, vendor, withdrawal, delete-song)
-    frontend/                   # Frontend styles (sticky-cart, tip-widget)
-    woocommerce/                # WooCommerce overrides (login form)
-  js/
-    artist/                     # Artist JS (artist-vendor, withdrawal, artist-profile)
-    frontend/                   # Frontend JS (sticky-cart, tip-widget)
+  css/                          # Scoped stylesheets (artist, frontend, woocommerce)
+  js/                           # Vanilla JS (artist, frontend)
   images/
     cart-icon.png               # Sticky cart icon
     logo.webp                   # Site logo used in login form
 ```
 
----
-
-## WordPress Options
-
-| Option key | Description |
-|---|---|
-| `tipping_paypal_client_id` | PayPal app Client ID |
-| `tipping_paypal_client_secret` | PayPal app Client Secret |
-| `tipping_paypal_sandbox` | `'1'` = sandbox, `'0'` = live |
-
----
-
-## Database
+<p align="center">
+    <h2 align="center">Database</h2>
+</p>
 
 **Table:** `wp_song_tips`
 
@@ -165,13 +150,42 @@ assets/
 | `song_wav` | varchar | WAV download URL |
 | `created_at` | datetime | Tip timestamp |
 
----
+<p align="center">
+    <h2 align="center">WordPress Options</h2>
+</p>
 
-## Development Notes
+| Option key | Description |
+|---|---|
+| `tipping_paypal_client_id` | PayPal app Client ID |
+| `tipping_paypal_client_secret` | PayPal app Client Secret |
+| `tipping_paypal_sandbox` | `'1'` = sandbox, `'0'` = live |
+
+<p align="center">
+    <h2 align="center">Development Notes</h2>
+</p>
 
 - No build system — pure PHP/CSS/JS, no `npm` or `composer`
-- Path constants `PAPER_TIPPING_PATH` and `PAPER_TIPPING_URL` are defined in the main file and used everywhere (no `__FILE__` chains)
+- Path constants `PAPER_TIPPING_PATH` and `PAPER_TIPPING_URL` defined in the main file and used everywhere
 - All HTML lives in `templates/` — logic files only set variables then `include` the template
 - Reusable queries go through `ArtistQuery`, file uploads through `UploadHandler`
 - Artists are capped at **5 songs** — enforced in both `add.php` and the AJAX handler
 - Withdrawal minimum is **$10** — enforced server-side in `withdrawal.php`
+
+<p align="center">
+    <h2 align="center">License</h2>
+</p>
+
+<p align="center">
+This project is open source and available under the <a href="LICENSE">MIT License</a>.
+</p>
+
+<p align="center">
+    <h2 align="center">Author</h2>
+</p>
+
+<p align="center">
+    <strong>Malik Zubayer Ul Haider</strong><br>
+    <a href="https://xianmalik.com">Website</a> •
+    <a href="https://github.com/xianmalik">GitHub</a> •
+    <a href="https://linkedin.com/in/xianmalik">LinkedIn</a>
+</p>
