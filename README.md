@@ -15,7 +15,7 @@
 
 <p align="center">
     <a href="https://github.com/xianmalik/tipping-addons-woocommerce">
-        <img alt="Repo Size" src="https://img.shields.io/github/repo-size/xianmalik/tipping-addons-woocommerce?color=%239ea1ab&label=SIZE&logo=square&style=for-the-badge&logoColor=D9E0EE&labelColor=3a3a3a"/></a>
+        <img alt="Repo Size" src="https://img.shields.io/github/repo-size/xianmalik/tipping-addons-woocommerce?color=%25239ea1ab&label=SIZE&logo=square&style=for-the-badge&logoColor=D9E0EE&labelColor=3a3a3a"/></a>
     <a href="https://github.com/xianmalik/tipping-addons-woocommerce/stargazers">
         <img alt="Stars" src="https://img.shields.io/github/stars/xianmalik/tipping-addons-woocommerce?style=for-the-badge&logo=starship&color=9ea1ab&logoColor=D9E0EE&labelColor=3a3a3a"></a>
 </p>
